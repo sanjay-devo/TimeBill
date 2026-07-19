@@ -6,4 +6,11 @@
     </style>
 
     <style name="Theme.TimeBill" parent="Base.Theme.TimeBill" />
+
+    <style name="Theme.TimeBill.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">#F5ECDD</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges</item>
+    </style>
 </resources>
