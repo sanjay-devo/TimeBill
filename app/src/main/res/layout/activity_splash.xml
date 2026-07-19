@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/splash_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,10 +9,38 @@
 
     <ImageView
         android:id="@+id/splash_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
         android:contentDescription="@null"
-        android:adjustViewBounds="true" />
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <!--
+        Premium Circular Loading Indicator
+        Style: 28dp x 28dp, Color #4A231F, Stroke 2.5dp
+    -->
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/splash_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:indicatorColor="#4A231F"
+        app:indicatorSize="35dp"
+        app:trackThickness="3.5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.85" />
+
+    <!--
+         Instructions to move the loader:
+         // Move loader slightly upward: Decrease vertical bias (e.g., 0.55)
+         // Move loader slightly downward: Increase vertical bias (e.g., 0.65)
+    -->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
