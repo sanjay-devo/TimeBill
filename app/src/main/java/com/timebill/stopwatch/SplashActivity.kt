@@ -36,9 +36,9 @@ class SplashActivity : AppCompatActivity() {
 
         val splashImage: ImageView = findViewById(R.id.splash_image)
 
-        // Load logo.png from assets
+        // Load splash.png from assets
         try {
-            assets.open("logo.png").use { inputStream ->
+            assets.open("splash.png").use { inputStream ->
                 val drawable = Drawable.createFromStream(inputStream, null)
                 splashImage.setImageDrawable(drawable)
             }

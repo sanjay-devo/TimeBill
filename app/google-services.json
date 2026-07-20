@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1055029317726",
+    "firebase_url": "https://timebill-icc-default-rtdb.firebaseio.com",
+    "project_id": "timebill-icc",
+    "storage_bucket": "timebill-icc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055029317726:android:8d897cec419e8d7d55a4cf",
+        "android_client_info": {
+          "package_name": "com.timebill.stopwatch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055029317726-dttqok28r4m4mv0mg38d43864etcge9t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOLSqX6TtbDNqzXaOLDLKNAoBpKyfD-gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055029317726-dttqok28r4m4mv0mg38d43864etcge9t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
