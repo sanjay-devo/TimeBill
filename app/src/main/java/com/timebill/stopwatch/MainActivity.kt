@@ -4,12 +4,14 @@ import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.Intent
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -17,10 +19,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputLayout
 import com.timebill.stopwatch.databinding.ActivityMainBinding
-import com.timebill.stopwatch.databinding.LayoutSessionSummaryBottomSheetBinding
+import com.timebill.stopwatch.databinding.LayoutSessionSuccessDialogBinding
 import com.timebill.stopwatch.model.Session
 import com.timebill.stopwatch.repository.FirebaseRepository
 import com.timebill.stopwatch.utils.PreferenceManager
@@ -28,6 +29,8 @@ import com.timebill.stopwatch.viewmodel.StopwatchViewModel
 import com.timebill.stopwatch.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -143,8 +146,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.homeHero.btnMainAction.setOnClickListener {
             if (viewModel.isRunning.value) {
+                // Save current timer text before reset
+                val currentTimer = binding.homeHero.tvTimer.text.toString()
                 val session = viewModel.stopTimer()
-                showSummaryBottomSheet(session)
+                viewModel.saveSession(session)
+                showSuccessDialog(session, currentTimer)
             } else {
                 val rate = binding.homeHero.etHourlyRate.text.toString().toDoubleOrNull() ?: 0.0
                 val name = binding.homeHero.etClientName.text.toString()
@@ -153,21 +159,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showSummaryBottomSheet(session: Session) {
-        val dialog = BottomSheetDialog(this)
-        val bottomSheetBinding = LayoutSessionSummaryBottomSheetBinding.inflate(layoutInflater)
-        dialog.setContentView(bottomSheetBinding.root)
+    private fun showSuccessDialog(session: Session, duration: String) {
+        val dialogBinding = LayoutSessionSuccessDialogBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogBinding.root)
+            .setCancelable(false)
+            .create()
 
-        bottomSheetBinding.tvSummaryClient.text = if (session.clientName.isNullOrEmpty()) "Unnamed Client" else session.clientName
-        bottomSheetBinding.tvSummaryTime.text = String.format(Locale.getDefault(), "Total Time: %s", formatDuration(session.durationMillis ?: 0L))
-        bottomSheetBinding.tvSummaryEarnings.text = String.format(Locale.getDefault(), "Total Earnings: ₹%.2f", session.earnings)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
 
-        bottomSheetBinding.btnSave.setOnClickListener {
-            viewModel.saveSession(session)
-            dialog.dismiss()
-        }
+        dialogBinding.tvDialogClient.text = "Client: ${if (session.clientName.isNullOrEmpty()) "Unnamed" else session.clientName}"
+        dialogBinding.tvDialogDuration.text = "Duration: $duration"
+        dialogBinding.tvDialogEarnings.text = String.format(Locale.getDefault(), "Earnings: ₹%.2f", session.earnings)
+        
+        val sdf = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
+        dialogBinding.tvDialogDateTime.text = "Date: ${sdf.format(Date(session.timestamp ?: System.currentTimeMillis()))}"
 
-        bottomSheetBinding.btnCancel.setOnClickListener {
+        dialogBinding.btnCloseDialog.setOnClickListener {
             dialog.dismiss()
         }
 
