@@ -7,9 +7,9 @@
     android:orientation="vertical"
     android:paddingBottom="48dp">
 
-    <!-- Start Tracking Button (Now at Top) -->
+    <!-- Action Button -->
     <ImageButton
-        android:id="@+id/btnStartTracking"
+        android:id="@+id/btnMainAction"
         android:layout_width="140dp"
         android:layout_height="140dp"
         android:layout_marginTop="64dp"
@@ -20,6 +20,7 @@
         android:src="@drawable/ic_play_rounded" />
 
     <TextView
+        android:id="@+id/tvActionLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -28,7 +29,7 @@
         android:textColor="@color/header_text"
         android:textSize="16sp" />
 
-    <!-- Timer Section (Now at Bottom) -->
+    <!-- Timer Section -->
     <TextView
         android:id="@+id/tvTimer"
         android:layout_width="wrap_content"
@@ -39,6 +40,17 @@
         android:textColor="@color/header_text"
         android:textSize="56sp"
         android:textStyle="bold" />
+
+    <!-- Live Earnings -->
+    <TextView
+        android:id="@+id/tvLiveEarnings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/default_earnings"
+        android:textColor="@color/accent_gold"
+        android:textSize="20sp" />
 
     <!-- Input Fields Section -->
     <com.google.android.material.textfield.TextInputLayout

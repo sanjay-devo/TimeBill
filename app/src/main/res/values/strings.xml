@@ -13,4 +13,18 @@
     <string name="label_hourly_rate">Hourly Rate</string>
     <string name="hint_hourly_rate">Enter hourly rate</string>
     <string name="prefix_currency">₹</string>
+    <string name="label_pause">Pause</string>
+    <string name="label_resume">Resume</string>
+    <string name="label_stop">Stop</string>
+    <string name="label_session_summary">Session Summary</string>
+    <string name="label_save">Save</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_history">History</string>
+    <string name="label_delete_all">Delete All</string>
+    <string name="msg_delete_all_confirm">Are you sure you want to delete all sessions?</string>
+    <string name="msg_no_history">No sessions found</string>
+    <string name="label_search">Search sessions...</string>
+    <string name="label_total_time">Total Time: %s</string>
+    <string name="label_total_earnings">Total Earnings: ₹%.2f</string>
+    <string name="label_date">Date: %s</string>
 </resources>
