@@ -5,4 +5,6 @@
     <color name="header_bg">#F8F4EF</color>
     <color name="header_divider">#E4D8C8</color>
     <color name="header_text">#2E1A17</color>
+    <color name="label_text">#7A6A63</color>
+    <color name="accent_gold">#D4AE7A</color>
 </resources>

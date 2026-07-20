@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="48dp">
+
+    <!-- Start Tracking Button (Now at Top) -->
+    <ImageButton
+        android:id="@+id/btnStartTracking"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/bg_play_button"
+        android:contentDescription="@string/label_start_tracking"
+        android:elevation="0dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_play_rounded" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/label_start_tracking"
+        android:textColor="@color/header_text"
+        android:textSize="16sp" />
+
+    <!-- Timer Section (Now at Bottom) -->
+    <TextView
+        android:id="@+id/tvTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:fontFamily="monospace"
+        android:text="@string/default_timer"
+        android:textColor="@color/header_text"
+        android:textSize="56sp"
+        android:textStyle="bold" />
+
+    <!-- Input Fields Section -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilClientName"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/label_client_name"
+        app:placeholderText="@string/hint_client_name"
+        app:startIconDrawable="@drawable/ic_person_rounded"
+        app:startIconTint="@color/label_text">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etClientName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilHourlyRate"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/label_hourly_rate"
+        app:placeholderText="@string/hint_hourly_rate"
+        app:prefixText="@string/prefix_currency"
+        app:prefixTextColor="@color/header_text"
+        app:startIconDrawable="@drawable/ic_payment_rounded"
+        app:startIconTint="@color/label_text">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etHourlyRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

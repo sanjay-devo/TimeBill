@@ -3,4 +3,14 @@
     <string name="desc_menu">Open Navigation Drawer</string>
     <string name="desc_history">Open History</string>
     <string name="desc_app_icon">App Icon</string>
+    <string name="label_today_earnings">Today\'s Earnings</string>
+    <string name="default_earnings">₹0.00</string>
+    <string name="default_timer">00:00:00</string>
+    <string name="label_live_stopwatch">Live Stopwatch</string>
+    <string name="label_start_tracking">Start Tracking</string>
+    <string name="label_client_name">Client Name</string>
+    <string name="hint_client_name">Enter client name</string>
+    <string name="label_hourly_rate">Hourly Rate</string>
+    <string name="hint_hourly_rate">Enter hourly rate</string>
+    <string name="prefix_currency">₹</string>
 </resources>
