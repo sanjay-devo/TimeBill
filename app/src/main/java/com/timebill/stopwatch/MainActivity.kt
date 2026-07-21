@@ -36,6 +36,7 @@ import com.timebill.stopwatch.model.Session
 import com.timebill.stopwatch.repository.FirebaseRepository
 import com.timebill.stopwatch.utils.PreferenceManager
 import com.timebill.stopwatch.utils.AppUtils
+import com.timebill.stopwatch.utils.HapticFeedbackHelper
 import com.timebill.stopwatch.viewmodel.StopwatchViewModel
 import com.timebill.stopwatch.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
@@ -289,17 +290,33 @@ class MainActivity : AppCompatActivity() {
         binding.homeHeader.btnHeaderPlayPause.setOnClickListener {
             val rate = parseRate(binding.homeHero.etHourlyRate.text.toString()) ?: 0.0
             val name = binding.homeHero.etClientName.text.toString()
+
+            // Trigger haptic feedback based on the action
+            if (!viewModel.isRunning.value) {
+                HapticFeedbackHelper.triggerStartFeedback(this)
+            } else if (viewModel.isPaused.value) {
+                HapticFeedbackHelper.triggerResumeFeedback(this)
+            } else {
+                HapticFeedbackHelper.triggerPauseFeedback(this)
+            }
+
             viewModel.toggleStartPause(rate, name)
         }
 
         binding.homeHero.btnMainAction.setOnClickListener {
             if (viewModel.isRunning.value) {
+                // Trigger Stop feedback
+                HapticFeedbackHelper.triggerStopFeedback(this)
+
                 // Save current timer text before reset
                 val currentTimer = binding.homeHero.tvTimer.text.toString()
                 val session = viewModel.stopTimer()
                 viewModel.saveSession(session)
                 showSuccessDialog(session, currentTimer)
             } else {
+                // Trigger Start feedback
+                HapticFeedbackHelper.triggerStartFeedback(this)
+
                 val rate = parseRate(binding.homeHero.etHourlyRate.text.toString()) ?: 0.0
                 val name = binding.homeHero.etClientName.text.toString()
                 viewModel.startTimer(rate, name)
