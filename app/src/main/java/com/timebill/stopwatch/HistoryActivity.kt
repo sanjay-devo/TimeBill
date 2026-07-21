@@ -22,6 +22,7 @@ import com.timebill.stopwatch.adapter.SessionsAdapter
 import com.timebill.stopwatch.databinding.ActivityHistoryBinding
 import com.timebill.stopwatch.repository.FirebaseRepository
 import com.timebill.stopwatch.utils.PreferenceManager
+import com.timebill.stopwatch.utils.AppUtils
 import com.timebill.stopwatch.viewmodel.HistoryViewModel
 import com.timebill.stopwatch.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
@@ -135,6 +136,18 @@ class HistoryActivity : AppCompatActivity() {
                 }
                 R.id.nav_disclaimer -> {
                     startActivity(WebViewActivity.createIntent(this, getString(R.string.nav_disclaimer), "https://timebill.indiacybercafe.com/disclaimer.html"))
+                }
+                R.id.nav_about -> {
+                    startActivity(Intent(this, AboutActivity::class.java))
+                }
+                R.id.nav_rate -> {
+                    AppUtils.openPlayStore(this)
+                }
+                R.id.nav_share -> {
+                    AppUtils.shareApp(this)
+                }
+                R.id.nav_update -> {
+                    AppUtils.openPlayStore(this)
                 }
                 else -> {
                     startActivity(Intent(this, ComingSoonActivity::class.java))

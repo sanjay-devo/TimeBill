@@ -45,6 +45,10 @@
             android:exported="false"
             android:theme="@style/Theme.TimeBill" />
         <activity
+            android:name=".AboutActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TimeBill" />
+        <activity
             android:name=".WebViewActivity"
             android:exported="false"
             android:theme="@style/Theme.TimeBill" />

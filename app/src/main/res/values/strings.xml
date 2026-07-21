@@ -54,7 +54,7 @@
     <string name="label_avg_hourly">Today\'s Earnings</string>
     <string name="msg_no_reports">No Reports Available</string>
     <string name="msg_no_reports_desc">Complete your first session to see your statistics.</string>
-    <string name="label_hours_format">%dh %dm</string>
+    <string name="label_hours_format">%1$dh %2$dm</string>
     <string name="label_currency_format">₹%,.2f</string>
     <string name="label_avg_format">₹%,.2f/hr</string>
 
@@ -88,5 +88,39 @@
     <string name="msg_downloading">Downloading File</string>
     <string name="msg_download_failed">Download failed: %s</string>
     <string name="msg_no_browser">No app found to open link</string>
+
+    <!-- About Page Strings -->
+    <string name="label_about_timebill">About TimeBill</string>
+    <string name="desc_about_timebill">TimeBill is a comprehensive time tracking and billing solution designed for freelancers, developers, consultants, and agencies. It helps you accurately track work hours, calculate earnings in real-time, and manage your productivity efficiently. Whether you are an independent professional or part of a growing business, TimeBill provides the tools you need to stay organized and ensure you get paid for every minute of your hard work.</string>
+    <string name="label_premium_features">Premium Features</string>
+    <string name="label_feature_stopwatch">Professional Stopwatch</string>
+    <string name="desc_feature_stopwatch">High-precision timer for accurate work tracking.</string>
+    <string name="label_feature_tracking">Time Tracking</string>
+    <string name="desc_feature_tracking">Seamlessly record sessions for different clients.</string>
+    <string name="label_feature_billing">Hourly Billing</string>
+    <string name="desc_feature_billing">Set custom hourly rates and see live earnings.</string>
+    <string name="label_feature_calc">Automatic Earnings Calculation</string>
+    <string name="desc_feature_calc">No more manual math, TimeBill handles it all.</string>
+    <string name="label_feature_reports">Reports</string>
+    <string name="desc_feature_reports">Detailed insights into your work patterns and earnings.</string>
+    <string name="label_feature_history">Session History</string>
+    <string name="desc_feature_history">Easily review and manage your past work records.</string>
+    <string name="label_feature_sync">Firebase Sync</string>
+    <string name="desc_feature_sync">Securely backup and sync your data across devices.</string>
+    <string name="label_feature_guest">Guest User</string>
+    <string name="desc_feature_guest">Start tracking immediately without complex sign-up.</string>
+
+    <string name="label_app_info">App Information</string>
+    <string name="label_info_version">Version</string>
+    <string name="label_info_package">Package Name</string>
+    <string name="label_info_developer">Developer</string>
+    <string name="label_info_website">Website</string>
+    <string name="label_info_support">Support Email</string>
+    <string name="label_info_phone">Phone</string>
+    <string name="val_info_developer">India Cyber Cafe</string>
+    <string name="val_info_website">https://timebill.indiacybercafe.com</string>
+    <string name="val_info_support">support@indiacybercafe.com</string>
+    <string name="val_info_phone">+91 9203251821</string>
+    <string name="label_footer_copyright">© TimeBill</string>
 
 </resources>
