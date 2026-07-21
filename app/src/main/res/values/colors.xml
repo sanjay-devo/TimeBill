@@ -7,4 +7,7 @@
     <color name="header_text">#2E1A17</color>
     <color name="label_text">#7A6A63</color>
     <color name="accent_gold">#D4AE7A</color>
+    <color name="drawer_header_bg">#4A231F</color>
+    <color name="drawer_bg">#F5ECDD</color>
+    <color name="drawer_surface">#F8F4EF</color>
 </resources>

@@ -20,6 +20,9 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputLayout
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 import com.timebill.stopwatch.databinding.ActivityMainBinding
 import com.timebill.stopwatch.databinding.LayoutSessionSuccessDialogBinding
 import com.timebill.stopwatch.model.Session
@@ -50,6 +53,14 @@ class MainActivity : AppCompatActivity() {
         setupViewModel()
         setupClickListeners()
         observeViewModel()
+        
+        // Set default navigation item
+        binding.navigationView.setCheckedItem(R.id.nav_home)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.navigationView.setCheckedItem(R.id.nav_home)
     }
 
     private fun setupViewModel() {
@@ -131,7 +142,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.homeHeader.btnMenu.setOnClickListener {
-            // Menu logic
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        binding.navigationView.setNavigationItemSelectedListener { menuItem ->
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            
+            when (menuItem.itemId) {
+                R.id.nav_home -> {
+                    // Already on Home
+                }
+                R.id.nav_history -> {
+                    startActivity(Intent(this, HistoryActivity::class.java))
+                }
+                else -> {
+                    startActivity(Intent(this, ComingSoonActivity::class.java))
+                }
+            }
+            true
         }
 
         binding.homeHeader.btnHistory.setOnClickListener {
@@ -190,12 +218,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { _, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.drawerLayout) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
             val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
             
             binding.homeHeader.headerRoot.updatePadding(top = systemBars.top)
+
+            val headerView = binding.navigationView.getHeaderView(0)
+            headerView?.updatePadding(top = systemBars.top)
             
             val bottomPadding = if (isImeVisible) ime.bottom else systemBars.bottom
             binding.homeScrollView.updatePadding(bottom = bottomPadding)

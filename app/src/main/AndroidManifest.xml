@@ -31,6 +31,10 @@
             android:name=".HistoryActivity"
             android:exported="false"
             android:theme="@style/Theme.TimeBill" />
+        <activity
+            android:name=".ComingSoonActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TimeBill" />
     </application>
 
 </manifest>

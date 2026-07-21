@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group_main"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_rounded"
+            android:title="@string/nav_home" />
+        <item
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_history_rounded"
+            android:title="@string/nav_history" />
+        <item
+            android:id="@+id/nav_reports"
+            android:icon="@drawable/ic_reports_rounded"
+            android:title="@string/nav_reports" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_profile_rounded"
+            android:title="@string/nav_profile" />
+    </group>
+
+    <item android:title="SETTINGS">
+        <menu>
+            <group
+                android:id="@+id/group_settings"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_settings"
+                    android:icon="@drawable/ic_settings_rounded"
+                    android:title="@string/nav_settings" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="SUPPORT">
+        <menu>
+            <group
+                android:id="@+id/group_support"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_help"
+                    android:icon="@drawable/ic_help_rounded"
+                    android:title="@string/nav_help" />
+                <item
+                    android:id="@+id/nav_contact"
+                    android:icon="@drawable/ic_contact_rounded"
+                    android:title="@string/nav_contact" />
+                <item
+                    android:id="@+id/nav_issue"
+                    android:icon="@drawable/ic_issue_rounded"
+                    android:title="@string/nav_issue" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="LEGAL">
+        <menu>
+            <group
+                android:id="@+id/group_legal"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_privacy"
+                    android:icon="@drawable/ic_privacy_rounded"
+                    android:title="@string/nav_privacy" />
+                <item
+                    android:id="@+id/nav_terms"
+                    android:icon="@drawable/ic_terms_rounded"
+                    android:title="@string/nav_terms" />
+                <item
+                    android:id="@+id/nav_disclaimer"
+                    android:icon="@drawable/ic_disclaimer_rounded"
+                    android:title="@string/nav_disclaimer" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="ABOUT">
+        <menu>
+            <group
+                android:id="@+id/group_about"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_about"
+                    android:icon="@drawable/ic_about_rounded"
+                    android:title="@string/nav_about" />
+                <item
+                    android:id="@+id/nav_rate"
+                    android:icon="@drawable/ic_rate_rounded"
+                    android:title="@string/nav_rate" />
+                <item
+                    android:id="@+id/nav_share"
+                    android:icon="@drawable/ic_share_rounded"
+                    android:title="@string/nav_share" />
+                <item
+                    android:id="@+id/nav_update"
+                    android:icon="@drawable/ic_update_rounded"
+                    android:title="@string/nav_update" />
+            </group>
+        </menu>
+    </item>
+
+</menu>

@@ -13,4 +13,8 @@
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges</item>
     </style>
+
+    <style name="ShapeAppearanceOverlay.App.CornerSize10" parent="">
+        <item name="cornerSize">12dp</item>
+    </style>
 </resources>
