@@ -1,11 +1,13 @@
 package com.timebill.stopwatch
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -38,12 +40,18 @@ class HistoryActivity : AppCompatActivity() {
         setupRecyclerView()
         setupListeners()
         observeViewModel()
+        
+        binding.navigationView.setCheckedItem(R.id.nav_history)
     }
 
     private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.historyRoot) { _, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.drawerLayout) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding.historyHeader.headerRoot.updatePadding(top = systemBars.top)
+            
+            val headerView = binding.navigationView.getHeaderView(0)
+            headerView?.updatePadding(top = systemBars.top)
+            
             binding.historyRoot.updatePadding(left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom)
             insets
         }
@@ -85,6 +93,30 @@ class HistoryActivity : AppCompatActivity() {
                 return true
             }
         })
+
+        binding.navigationView.setNavigationItemSelectedListener { menuItem ->
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            
+            when (menuItem.itemId) {
+                R.id.nav_home -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    startActivity(intent)
+                    finish()
+                }
+                R.id.nav_history -> {
+                    // Already here
+                }
+                R.id.nav_reports -> {
+                    startActivity(Intent(this, ReportsActivity::class.java))
+                    finish()
+                }
+                else -> {
+                    startActivity(Intent(this, ComingSoonActivity::class.java))
+                }
+            }
+            true
+        }
     }
 
     private fun observeViewModel() {

@@ -47,4 +47,16 @@
     <string name="nav_header_subtitle">Time Tracker &amp; Billing</string>
     <string name="coming_soon">Coming Soon</string>
     <string name="coming_soon_desc">This feature is under development and will be available in a future update.</string>
+    <!-- Reports Strings -->
+    <string name="label_reports">Reports</string>
+    <string name="label_total_hours">Total Hours Worked</string>
+    <string name="label_total_earnings_report">Total Earnings</string>
+    <string name="label_total_sessions">Total Sessions</string>
+    <string name="label_avg_hourly">Today\'s Earnings</string>
+    <string name="msg_no_reports">No Reports Available</string>
+    <string name="msg_no_reports_desc">Complete your first session to see your statistics.</string>
+    <string name="label_hours_format">%dh %dm</string>
+    <string name="label_currency_format">₹%,.2f</string>
+    <string name="label_avg_format">₹%,.2f/hr</string>
+
 </resources>

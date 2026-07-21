@@ -14,6 +14,10 @@ class ViewModelFactory(private val repository: FirebaseRepository) : ViewModelPr
             @Suppress("UNCHECKED_CAST")
             return HistoryViewModel(repository) as T
         }
+        if (modelClass.isAssignableFrom(ReportsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return ReportsViewModel(repository) as T
+        }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
