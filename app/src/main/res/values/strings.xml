@@ -82,4 +82,11 @@
     <string name="msg_error_generic">Something went wrong. Please try again.</string>
     <string name="label_loading">Loading...</string>
 
+    <!-- WebView Activity -->
+    <string name="msg_connection_failed">Connection Failed</string>
+    <string name="label_retry">Retry</string>
+    <string name="msg_downloading">Downloading File</string>
+    <string name="msg_download_failed">Download failed: %s</string>
+    <string name="msg_no_browser">No app found to open link</string>
+
 </resources>

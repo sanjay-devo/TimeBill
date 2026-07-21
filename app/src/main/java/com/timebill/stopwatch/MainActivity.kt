@@ -222,6 +222,24 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_profile -> {
                     startActivity(Intent(this, ProfileActivity::class.java))
                 }
+                R.id.nav_help -> {
+                    startActivity(WebViewActivity.createIntent(this, getString(R.string.nav_help), "https://timebill.indiacybercafe.com/help-faq.html"))
+                }
+                R.id.nav_contact -> {
+                    startActivity(WebViewActivity.createIntent(this, getString(R.string.nav_contact), "https://timebill.indiacybercafe.com/contact-support.html"))
+                }
+                R.id.nav_issue -> {
+                    startActivity(WebViewActivity.createIntent(this, getString(R.string.nav_issue), "https://timebill.indiacybercafe.com/report-issue.html"))
+                }
+                R.id.nav_privacy -> {
+                    startActivity(WebViewActivity.createIntent(this, getString(R.string.nav_privacy), "https://timebill.indiacybercafe.com/privacy-policy.html"))
+                }
+                R.id.nav_terms -> {
+                    startActivity(WebViewActivity.createIntent(this, getString(R.string.nav_terms), "https://timebill.indiacybercafe.com/terms-and-conditions.html"))
+                }
+                R.id.nav_disclaimer -> {
+                    startActivity(WebViewActivity.createIntent(this, getString(R.string.nav_disclaimer), "https://timebill.indiacybercafe.com/disclaimer.html"))
+                }
                 else -> {
                     startActivity(Intent(this, ComingSoonActivity::class.java))
                 }
