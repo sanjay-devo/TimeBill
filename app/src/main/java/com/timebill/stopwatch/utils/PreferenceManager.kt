@@ -19,4 +19,8 @@ class PreferenceManager(context: Context) {
         }
         return guestId
     }
+
+    fun clearAllData() {
+        prefs.edit().clear().apply()
+    }
 }

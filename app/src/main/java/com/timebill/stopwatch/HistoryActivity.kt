@@ -115,6 +115,9 @@ class HistoryActivity : AppCompatActivity() {
                     startActivity(Intent(this, ReportsActivity::class.java))
                     finish()
                 }
+                R.id.nav_profile -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                }
                 else -> {
                     startActivity(Intent(this, ComingSoonActivity::class.java))
                 }

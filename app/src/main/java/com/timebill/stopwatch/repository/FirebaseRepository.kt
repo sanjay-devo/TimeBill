@@ -43,6 +43,10 @@ class FirebaseRepository(private val guestId: String) {
         database.child("sessions").removeValue().await()
     }
 
+    suspend fun deleteAccount() {
+        database.removeValue().await()
+    }
+
     suspend fun saveDefaultHourlyRate(rate: Double) {
         database.child("profile").child("defaultHourlyRate").setValue(rate).await()
     }

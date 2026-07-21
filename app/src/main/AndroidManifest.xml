@@ -40,6 +40,10 @@
             android:name=".ReportsActivity"
             android:exported="false"
             android:theme="@style/Theme.TimeBill" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TimeBill" />
     </application>
 
 </manifest>

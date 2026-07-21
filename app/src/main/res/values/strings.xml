@@ -59,4 +59,28 @@
     <string name="label_currency_format">₹%,.2f</string>
     <string name="label_avg_format">₹%,.2f/hr</string>
 
+    <!-- Profile Strings -->
+    <string name="title_profile">Profile</string>
+    <string name="label_guest_user">Guest User</string>
+    <string name="label_guest_id">Guest ID: %s</string>
+    <string name="label_data_management">Data Management</string>
+    <string name="action_delete_all_data">Delete All Data</string>
+    <string name="action_delete_guest_account">Delete Guest Account</string>
+
+    <string name="dialog_delete_all_title">Delete All Data</string>
+    <string name="dialog_delete_all_msg">This action permanently deletes all your recorded work sessions and calculated reports from your account.\n\nYour Guest Account will remain safe.</string>
+
+    <string name="dialog_delete_account_title">Delete Guest Account</string>
+    <string name="dialog_delete_account_msg">This action permanently deletes your Guest Account and all associated data.\n\nA brand-new Guest Account will automatically be created.</string>
+
+    <string name="dialog_delete_action">Delete</string>
+    <string name="dialog_delete_account_action">Delete Account</string>
+
+    <string name="msg_success_data_deleted">All data deleted successfully.</string>
+    <string name="msg_success_account_deleted">Account deleted successfully. New Guest ID generated.</string>
+    <string name="label_success">Success</string>
+    <string name="label_error">Error</string>
+    <string name="msg_error_generic">Something went wrong. Please try again.</string>
+    <string name="label_loading">Loading...</string>
+
 </resources>
