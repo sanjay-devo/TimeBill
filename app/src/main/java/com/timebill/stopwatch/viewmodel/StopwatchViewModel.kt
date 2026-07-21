@@ -26,11 +26,38 @@ class StopwatchViewModel(private val repository: FirebaseRepository) : ViewModel
     private val _isPaused = MutableStateFlow(false)
     val isPaused: StateFlow<Boolean> = _isPaused.asStateFlow()
 
+    private val _defaultHourlyRate = MutableStateFlow<Double?>(null)
+    val defaultHourlyRate: StateFlow<Double?> = _defaultHourlyRate.asStateFlow()
+
     private var timerJob: Job? = null
     private var startTime = 0L
     private var accumulatedTime = 0L
     private var hourlyRate = 0.0
     var clientName = ""
+
+    init {
+        loadDefaultHourlyRate()
+    }
+
+    private fun loadDefaultHourlyRate() {
+        viewModelScope.launch {
+            repository.getDefaultHourlyRate().collect { rate ->
+                _defaultHourlyRate.value = rate
+            }
+        }
+    }
+
+    fun updateDefaultHourlyRate(rate: Double) {
+        if (_defaultHourlyRate.value == rate) return
+
+        viewModelScope.launch {
+            try {
+                repository.saveDefaultHourlyRate(rate)
+            } catch (_: Exception) {
+                // Log error or handle it
+            }
+        }
+    }
 
     fun toggleStartPause(rate: Double, name: String) {
         if (!_isRunning.value) {

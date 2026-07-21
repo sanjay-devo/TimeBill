@@ -19,8 +19,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
 import androidx.core.view.GravityCompat
+import java.text.DecimalFormat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.timebill.stopwatch.databinding.ActivityMainBinding
@@ -41,6 +43,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: StopwatchViewModel
     private var currentBorderColor: Int = 0
+    private var isFirstRateLoad = true
+    private var isFormatting = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +75,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.defaultHourlyRate.collectLatest { rate ->
+                if (rate != null && (isFirstRateLoad || binding.homeHero.etHourlyRate.text.isNullOrEmpty())) {
+                    if (!binding.homeHero.etHourlyRate.isFocused) {
+                        isFormatting = true
+                        binding.homeHero.etHourlyRate.setText(formatRate(rate))
+                        isFormatting = false
+                        isFirstRateLoad = false
+                    }
+                }
+            }
+        }
+
         lifecycleScope.launch {
             viewModel.timerText.collectLatest {
                 binding.homeHero.tvTimer.text = it
@@ -141,6 +158,25 @@ class MainActivity : AppCompatActivity() {
     private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
 
     private fun setupClickListeners() {
+        binding.homeHero.etHourlyRate.addTextChangedListener { text ->
+            if (isFormatting) return@addTextChangedListener
+            val rate = parseRate(text.toString())
+            if (rate != null) {
+                viewModel.updateDefaultHourlyRate(rate)
+            }
+        }
+
+        binding.homeHero.etHourlyRate.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val rate = parseRate(binding.homeHero.etHourlyRate.text.toString())
+                if (rate != null) {
+                    isFormatting = true
+                    binding.homeHero.etHourlyRate.setText(formatRate(rate))
+                    isFormatting = false
+                }
+            }
+        }
+
         binding.homeHeader.btnMenu.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
@@ -170,7 +206,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.homeHeader.btnHeaderPlayPause.setOnClickListener {
-            val rate = binding.homeHero.etHourlyRate.text.toString().toDoubleOrNull() ?: 0.0
+            val rate = parseRate(binding.homeHero.etHourlyRate.text.toString()) ?: 0.0
             val name = binding.homeHero.etClientName.text.toString()
             viewModel.toggleStartPause(rate, name)
         }
@@ -183,7 +219,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.saveSession(session)
                 showSuccessDialog(session, currentTimer)
             } else {
-                val rate = binding.homeHero.etHourlyRate.text.toString().toDoubleOrNull() ?: 0.0
+                val rate = parseRate(binding.homeHero.etHourlyRate.text.toString()) ?: 0.0
                 val name = binding.homeHero.etClientName.text.toString()
                 viewModel.startTimer(rate, name)
             }
@@ -256,6 +292,18 @@ class MainActivity : AppCompatActivity() {
             binding.main.updatePadding(left = systemBars.left, right = systemBars.right)
             insets
         }
+    }
+
+    private fun formatRate(rate: Double): String {
+        return if (rate % 1.0 == 0.0) {
+            DecimalFormat("0").format(rate)
+        } else {
+            DecimalFormat("0.00").format(rate)
+        }
+    }
+
+    private fun parseRate(text: String): Double? {
+        return text.replace(',', '.').toDoubleOrNull()
     }
 
     private fun findParentTextInputLayout(view: View): TextInputLayout? {

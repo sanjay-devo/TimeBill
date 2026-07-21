@@ -42,4 +42,24 @@ class FirebaseRepository(private val guestId: String) {
     suspend fun deleteAllSessions() {
         database.child("sessions").removeValue().await()
     }
+
+    suspend fun saveDefaultHourlyRate(rate: Double) {
+        database.child("profile").child("defaultHourlyRate").setValue(rate).await()
+    }
+
+    fun getDefaultHourlyRate(): Flow<Double?> = callbackFlow {
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val rate = snapshot.getValue(Double::class.java)
+                trySend(rate)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                close(error.toException())
+            }
+        }
+        val ref = database.child("profile").child("defaultHourlyRate")
+        ref.addValueEventListener(listener)
+        awaitClose { ref.removeEventListener(listener) }
+    }
 }
