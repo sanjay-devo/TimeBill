@@ -8,9 +8,9 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -185,7 +185,7 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun showDeleteAllDialog() {
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.label_delete_all)
             .setMessage(R.string.msg_delete_all_confirm)
             .setPositiveButton(R.string.label_delete_all) { _, _ ->

@@ -5,7 +5,17 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.TimeBill" parent="Base.Theme.TimeBill" />
+    <style name="Theme.TimeBill" parent="Base.Theme.TimeBill">
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
+    </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.App.Dialog</item>
+    </style>
+
+    <style name="ShapeAppearance.App.Dialog" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerSize">28dp</item>
+    </style>
 
     <style name="Theme.TimeBill.Splash" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">#F5ECDD</item>

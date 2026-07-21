@@ -16,7 +16,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -309,7 +309,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showSuccessDialog(session: Session, duration: String) {
         val dialogBinding = LayoutSessionSuccessDialogBinding.inflate(layoutInflater)
-        val dialog = AlertDialog.Builder(this)
+        val dialog = MaterialAlertDialogBuilder(this)
             .setView(dialogBinding.root)
             .setCancelable(false)
             .create()
