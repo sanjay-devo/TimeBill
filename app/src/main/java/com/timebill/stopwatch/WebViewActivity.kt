@@ -70,7 +70,8 @@ class WebViewActivity : AppCompatActivity() {
         }
         binding.btnRetry.setOnClickListener {
             binding.errorLayout.visibility = View.GONE
-            binding.webView.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.VISIBLE
+            binding.webView.visibility = View.INVISIBLE
             loadUrl(pageUrl)
         }
     }
@@ -97,12 +98,16 @@ class WebViewActivity : AppCompatActivity() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 binding.progressBar.visibility = View.VISIBLE
+                binding.webView.visibility = View.INVISIBLE
                 binding.errorLayout.visibility = View.GONE
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 binding.progressBar.visibility = View.GONE
+                if (binding.errorLayout.visibility != View.VISIBLE) {
+                    binding.webView.visibility = View.VISIBLE
+                }
             }
 
             override fun onReceivedError(
@@ -168,7 +173,7 @@ class WebViewActivity : AppCompatActivity() {
 
     private fun showError() {
         binding.progressBar.visibility = View.GONE
-        binding.webView.visibility = View.GONE
+        binding.webView.visibility = View.INVISIBLE
         binding.errorLayout.visibility = View.VISIBLE
     }
 
