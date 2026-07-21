@@ -80,14 +80,26 @@ class MainActivity : AppCompatActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.defaultHourlyRate.collectLatest { rate ->
-                if (rate != null && (isFirstRateLoad || binding.homeHero.etHourlyRate.text.isNullOrEmpty())) {
+                val currentText = binding.homeHero.etHourlyRate.text.toString()
+                
+                if (rate != null && rate > 0.0) {
+                    if (isFirstRateLoad || (currentText.isEmpty() && !binding.homeHero.etHourlyRate.isFocused)) {
+                        if (!binding.homeHero.etHourlyRate.isFocused) {
+                            isFormatting = true
+                            binding.homeHero.etHourlyRate.setText(formatRate(rate))
+                            binding.homeHero.tilHourlyRate.prefixText = getString(R.string.prefix_currency)
+                            isFormatting = false
+                        }
+                    }
+                } else {
                     if (!binding.homeHero.etHourlyRate.isFocused) {
                         isFormatting = true
-                        binding.homeHero.etHourlyRate.setText(formatRate(rate))
+                        binding.homeHero.etHourlyRate.setText("")
+                        binding.homeHero.tilHourlyRate.prefixText = null
                         isFormatting = false
-                        isFirstRateLoad = false
                     }
                 }
+                isFirstRateLoad = false
             }
         }
 
@@ -162,19 +174,29 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.homeHero.etHourlyRate.addTextChangedListener { text ->
+            val hasText = !text.isNullOrEmpty()
+            binding.homeHero.tilHourlyRate.prefixText = if (hasText) getString(R.string.prefix_currency) else null
+
             if (isFormatting) return@addTextChangedListener
-            val rate = parseRate(text.toString())
-            if (rate != null) {
-                viewModel.updateDefaultHourlyRate(rate)
-            }
+            val rate = parseRate(text.toString()) ?: 0.0
+            viewModel.updateDefaultHourlyRate(rate)
         }
 
         binding.homeHero.etHourlyRate.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                val rate = parseRate(binding.homeHero.etHourlyRate.text.toString())
-                if (rate != null) {
+            if (hasFocus) {
+                binding.homeHero.tilHourlyRate.prefixText = getString(R.string.prefix_currency)
+            } else {
+                val text = binding.homeHero.etHourlyRate.text.toString()
+                val rate = parseRate(text)
+                if (rate != null && rate > 0.0) {
                     isFormatting = true
                     binding.homeHero.etHourlyRate.setText(formatRate(rate))
+                    binding.homeHero.tilHourlyRate.prefixText = getString(R.string.prefix_currency)
+                    isFormatting = false
+                } else {
+                    isFormatting = true
+                    binding.homeHero.etHourlyRate.setText("")
+                    binding.homeHero.tilHourlyRate.prefixText = null
                     isFormatting = false
                 }
             }

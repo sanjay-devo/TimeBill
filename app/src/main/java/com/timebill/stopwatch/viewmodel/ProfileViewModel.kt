@@ -55,9 +55,6 @@ class ProfileViewModel(
                 // 4. Update repository with new guestId
                 repository = FirebaseRepository(newGuestId)
                 
-                // 5. Automatically create profile node
-                repository.saveDefaultHourlyRate(0.0) // Minimal profile initialization
-                
                 _event.emit(ProfileEvent.AccountDeleted)
             } catch (e: Exception) {
                 _event.emit(ProfileEvent.Error(e.message ?: "Failed to delete account"))
