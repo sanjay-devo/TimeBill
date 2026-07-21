@@ -13,6 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     private var currentBorderColor: Int = 0
     private var isFirstRateLoad = true
     private var isFormatting = false
+    private var backPressedTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +67,25 @@ class MainActivity : AppCompatActivity() {
         
         // Set default navigation item
         binding.navigationView.setCheckedItem(R.id.nav_home)
+
+        setupBackPressed()
+    }
+
+    private fun setupBackPressed() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                } else {
+                    if (backPressedTime + 2000 > System.currentTimeMillis()) {
+                        finish()
+                    } else {
+                        Toast.makeText(this@MainActivity, getString(R.string.msg_exit_confirm), Toast.LENGTH_SHORT).show()
+                        backPressedTime = System.currentTimeMillis()
+                    }
+                }
+            }
+        })
     }
 
     override fun onResume() {
