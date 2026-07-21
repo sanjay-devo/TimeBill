@@ -119,7 +119,7 @@
     <string name="label_info_phone">Phone</string>
     <string name="val_info_developer">India Cyber Cafe</string>
     <string name="val_info_website">https://timebill.indiacybercafe.com</string>
-    <string name="val_info_support">support@indiacybercafe.com</string>
+    <string name="val_info_support">support@timebill.indiacybercafe.com</string>
     <string name="val_info_phone">+91 9203251821</string>
     <string name="label_footer_copyright">© TimeBill</string>
     <string name="msg_exit_confirm">Press again to exit</string>

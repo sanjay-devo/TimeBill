@@ -30,4 +30,33 @@ object AppUtils {
         
         context.startActivity(Intent.createChooser(intent, "Share via"))
     }
+
+    fun openWebsite(context: Context, url: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            context.startActivity(intent)
+        } catch (_: Exception) {
+            // Handle error
+        }
+    }
+
+    fun openEmail(context: Context, email: String) {
+        try {
+            val intent = Intent(Intent.ACTION_SENDTO)
+            intent.data = Uri.parse("mailto:$email")
+            context.startActivity(Intent.createChooser(intent, "Send Email"))
+        } catch (_: Exception) {
+            // Handle error
+        }
+    }
+
+    fun openDialer(context: Context, phone: String) {
+        try {
+            val intent = Intent(Intent.ACTION_DIAL)
+            intent.data = Uri.parse("tel:$phone")
+            context.startActivity(intent)
+        } catch (_: Exception) {
+            // Handle error
+        }
+    }
 }

@@ -100,6 +100,25 @@ class AboutActivity : AppCompatActivity() {
             finish()
         }
 
+        binding.infoPackage.root.setOnClickListener {
+            AppUtils.openPlayStore(this)
+        }
+
+        binding.infoWebsite.root.setOnClickListener {
+            val url = getString(R.string.val_info_website)
+            AppUtils.openWebsite(this, url)
+        }
+
+        binding.infoSupport.root.setOnClickListener {
+            val email = getString(R.string.val_info_support)
+            AppUtils.openEmail(this, email)
+        }
+
+        binding.infoPhone.root.setOnClickListener {
+            val phone = getString(R.string.val_info_phone)
+            AppUtils.openDialer(this, phone)
+        }
+
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             
