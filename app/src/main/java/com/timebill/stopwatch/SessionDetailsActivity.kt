@@ -427,12 +427,11 @@ class SessionDetailsActivity : AppCompatActivity() {
         val page = pdfDocument.startPage(pageInfo)
         val canvas = page.canvas
 
-        val cream = Color.parseColor("#F8F4EF")
         val gold = Color.parseColor("#D4AE7A")
         val darkBrown = Color.parseColor("#2E1A17")
         val labelColor = Color.parseColor("#7A6A63")
 
-        canvas.drawColor(cream)
+        canvas.drawColor(Color.WHITE)
 
         val paint = Paint()
         val titlePaint = Paint().apply {
