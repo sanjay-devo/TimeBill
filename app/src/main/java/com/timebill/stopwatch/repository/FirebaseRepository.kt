@@ -5,6 +5,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.timebill.stopwatch.model.Session
+import com.timebill.stopwatch.model.UserProfile
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -63,6 +64,33 @@ class FirebaseRepository(private val guestId: String) {
             }
         }
         val ref = database.child("profile").child("defaultHourlyRate")
+        ref.addValueEventListener(listener)
+        awaitClose { ref.removeEventListener(listener) }
+    }
+
+    suspend fun saveProfile(profile: UserProfile) {
+        FirebaseDatabase.getInstance().reference
+            .child("profiles")
+            .child(guestId)
+            .setValue(profile)
+            .await()
+    }
+
+    fun getProfile(): Flow<UserProfile?> = callbackFlow {
+        val ref = FirebaseDatabase.getInstance().reference
+            .child("profiles")
+            .child(guestId)
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val profile = snapshot.getValue(UserProfile::class.java)
+                trySend(profile)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                close(error.toException())
+            }
+        }
         ref.addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }
     }

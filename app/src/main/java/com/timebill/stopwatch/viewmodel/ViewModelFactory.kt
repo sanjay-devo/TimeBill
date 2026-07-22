@@ -26,6 +26,10 @@ class ViewModelFactory(
             @Suppress("UNCHECKED_CAST")
             return ProfileViewModel(repository, preferenceManager!!) as T
         }
+        if (modelClass.isAssignableFrom(EditProfileViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return EditProfileViewModel(repository) as T
+        }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

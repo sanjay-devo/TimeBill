@@ -80,6 +80,21 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Edit Profile Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditProfile"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="24dp"
+                android:text="@string/action_edit_profile"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:backgroundTint="@color/accent_gold"
+                app:cornerRadius="16dp"
+                app:rippleColor="#40FFFFFF" />
+
             <!-- Data Management Card -->
             <TextView
                 android:layout_width="wrap_content"

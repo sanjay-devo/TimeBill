@@ -1,5 +1,6 @@
 package com.timebill.stopwatch
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -60,6 +61,10 @@ class ProfileActivity : AppCompatActivity() {
     private fun setupListeners() {
         binding.profileHeader.btnBack.setOnClickListener {
             finish()
+        }
+
+        binding.btnEditProfile.setOnClickListener {
+            startActivity(Intent(this, EditProfileActivity::class.java))
         }
 
         binding.btnDeleteAllData.setOnClickListener {
