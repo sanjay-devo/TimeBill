@@ -254,8 +254,10 @@ class SessionDetailsActivity : AppCompatActivity() {
         binding.atvStatus.setText(session.status, false)
 
         binding.etReceiptNumber.setText(session.receiptNumber)
-        binding.etReceiptDate.setText(sdfDate.format(Date(session.createdAt ?: session.timestamp ?: 0L)))
-        binding.etGeneratedTime.setText(sdfTime.format(Date(session.createdAt ?: session.timestamp ?: 0L)))
+        
+        val receiptTs = if (session.receiptTimestamp != 0L) session.receiptTimestamp!! else (session.createdAt ?: session.timestamp ?: 0L)
+        binding.etReceiptDate.setText(sdfDate.format(Date(receiptTs)))
+        binding.etGeneratedTime.setText(sdfTime.format(Date(receiptTs)))
     }
 
     private fun populateProfileData(profile: UserProfile?) {
@@ -338,6 +340,10 @@ class SessionDetailsActivity : AppCompatActivity() {
         updates["clientAddress"] = address
         updates["workName"] = workName
         updates["hasClientDetails"] = hasDetails
+        
+        // Generate real receipt timestamp
+        val currentTimestamp = System.currentTimeMillis()
+        updates["receiptTimestamp"] = currentTimestamp
 
         sessionId?.let { id ->
             viewModel.updateSessionDetails(id, updates)
@@ -348,7 +354,8 @@ class SessionDetailsActivity : AppCompatActivity() {
                 clientEmail = email,
                 clientAddress = address,
                 workName = workName,
-                hasClientDetails = hasDetails
+                hasClientDetails = hasDetails,
+                receiptTimestamp = currentTimestamp
             )
             
             // Auto create/update client
@@ -453,8 +460,15 @@ class SessionDetailsActivity : AppCompatActivity() {
         normalPaint.textAlign = Paint.Align.RIGHT
         normalPaint.color = Color.BLACK
         normalPaint.textSize = 12f
-        canvas.drawText("Receipt No: ${session.receiptNumber ?: "-"}", rightX, 85f, normalPaint)
-        canvas.drawText("Receipt Date: ${SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(session.createdAt ?: session.timestamp ?: 0L))}", rightX, 105f, normalPaint)
+        canvas.drawText("Receipt No. : ${session.receiptNumber ?: "-"}", rightX, 85f, normalPaint)
+        
+        // Date and Time on the same row, both on the right side
+        val receiptTs = if (session.receiptTimestamp != 0L) session.receiptTimestamp!! else (session.createdAt ?: session.timestamp ?: 0L)
+        val dateStr = "Date : ${SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(receiptTs))}"
+        val timeStr = "Time : ${SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(receiptTs))}"
+        val combinedDateTime = "$dateStr     $timeStr"
+        
+        canvas.drawText(combinedDateTime, rightX, 105f, normalPaint)
         
         titlePaint.textAlign = Paint.Align.LEFT
         normalPaint.textAlign = Paint.Align.LEFT
