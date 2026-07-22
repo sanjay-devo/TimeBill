@@ -120,13 +120,19 @@ class StopwatchViewModel(private val repository: FirebaseRepository) : ViewModel
     fun stopTimer(): Session {
         val finalDuration = if (_isPaused.value) accumulatedTime else accumulatedTime + (System.currentTimeMillis() - startTime)
         val finalEarnings = (finalDuration / 3600000.0) * hourlyRate
+        val endTime = System.currentTimeMillis()
+        val startTimeSession = endTime - finalDuration
         
         val session = Session(
             clientName = clientName,
             hourlyRate = hourlyRate,
-            startTime = System.currentTimeMillis() - finalDuration,
+            startTime = startTimeSession,
+            endTime = endTime,
             durationMillis = finalDuration,
-            earnings = finalEarnings
+            earnings = finalEarnings,
+            status = "Work Completed",
+            createdAt = System.currentTimeMillis(),
+            timestamp = System.currentTimeMillis()
         )
         
         resetTimer()

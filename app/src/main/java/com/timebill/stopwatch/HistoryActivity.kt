@@ -70,9 +70,16 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = SessionsAdapter { sessionId ->
-            viewModel.deleteSession(sessionId)
-        }
+        adapter = SessionsAdapter(
+            onDelete = { sessionId ->
+                viewModel.deleteSession(sessionId)
+            },
+            onClick = { sessionId ->
+                val intent = Intent(this, SessionDetailsActivity::class.java)
+                intent.putExtra("SESSION_ID", sessionId)
+                startActivity(intent)
+            }
+        )
         binding.rvHistory.layoutManager = LinearLayoutManager(this)
         binding.rvHistory.adapter = adapter
     }

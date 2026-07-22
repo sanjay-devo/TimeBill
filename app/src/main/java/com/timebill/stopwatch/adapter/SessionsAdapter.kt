@@ -12,7 +12,8 @@ import java.util.Date
 import java.util.Locale
 
 class SessionsAdapter(
-    private val onDelete: (String) -> Unit
+    private val onDelete: (String) -> Unit,
+    private val onClick: (String) -> Unit
 ) : ListAdapter<Session, SessionsAdapter.SessionViewHolder>(SessionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {
@@ -26,6 +27,9 @@ class SessionsAdapter(
 
     inner class SessionViewHolder(private val binding: ItemSessionBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(session: Session) {
+            binding.root.setOnClickListener {
+                session.id?.let { onClick(it) }
+            }
             binding.tvItemClient.text = if (session.clientName.isNullOrEmpty()) "Unnamed Client" else session.clientName
             binding.tvItemEarnings.text = String.format(Locale.getDefault(), "₹%.2f", session.earnings ?: 0.0)
             binding.tvItemDuration.text = formatDuration(session.durationMillis ?: 0L)

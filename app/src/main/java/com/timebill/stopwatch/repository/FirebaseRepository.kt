@@ -20,6 +20,28 @@ class FirebaseRepository(private val guestId: String) {
         database.child("sessions").child(sessionId).setValue(sessionWithId).await()
     }
 
+    fun getSession(sessionId: String): Flow<Session?> = callbackFlow {
+        val ref = database.child("sessions").child(sessionId)
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                trySend(snapshot.getValue(Session::class.java))
+            }
+            override fun onCancelled(error: DatabaseError) {
+                close(error.toException())
+            }
+        }
+        ref.addValueEventListener(listener)
+        awaitClose { ref.removeEventListener(listener) }
+    }
+
+    suspend fun updateSessionStatus(sessionId: String, status: String, receiptNumber: String) {
+        val updates = mapOf(
+            "status" to status,
+            "receiptNumber" to receiptNumber
+        )
+        database.child("sessions").child(sessionId).updateChildren(updates).await()
+    }
+
     fun getSessions(): Flow<List<Session>> = callbackFlow {
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

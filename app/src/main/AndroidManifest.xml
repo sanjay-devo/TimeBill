@@ -58,6 +58,27 @@
             android:name=".WebViewActivity"
             android:exported="false"
             android:theme="@style/Theme.TimeBill" />
+
+        <activity
+            android:name=".SessionDetailsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TimeBill"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".PdfViewerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TimeBill" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.timebill.stopwatch.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

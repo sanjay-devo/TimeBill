@@ -145,4 +145,39 @@
 
     <string name="action_save_changes">Save Changes</string>
     <string name="msg_profile_updated">Profile updated successfully</string>
+
+    <!-- Session Details -->
+    <string name="title_session_details">Session Details</string>
+    <string name="label_session_summary_section">Session Summary</string>
+    <string name="label_billing_info_section">Billing Information</string>
+    <string name="label_receipt_info_section">Receipt Information</string>
+
+    <string name="label_session_id">Session ID</string>
+    <string name="label_receipt_number">Receipt Number</string>
+    <string name="label_session_date">Session Date</string>
+    <string name="label_start_time">Start Time</string>
+    <string name="label_end_time">End Time</string>
+    <string name="label_duration">Duration</string>
+    <string name="label_total_earnings_sd">Total Earnings</string>
+    <string name="label_status">Status</string>
+
+    <string name="status_work_completed">Work Completed</string>
+    <string name="status_work_in_progress">Work In Progress</string>
+    <string name="status_payment_pending">Payment Pending</string>
+    <string name="status_payment_received">Payment Received</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_on_hold">On Hold</string>
+
+    <string name="label_receipt_date">Receipt Date</string>
+    <string name="label_generated_time">Generated Time</string>
+
+    <string name="action_view_receipt">View Receipt</string>
+    <string name="action_download_pdf">Download PDF</string>
+    <string name="action_share_receipt">Share Receipt</string>
+    <string name="action_delete_session">Delete Session</string>
+
+    <string name="dialog_delete_session_title">Delete Session?</string>
+    <string name="msg_delete_session_confirm">Are you sure you want to delete this session?</string>
+
+    <string name="msg_pdf_saved">PDF saved to Downloads folder</string>
 </resources>
