@@ -4,6 +4,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.timebill.stopwatch.model.Client
 import com.timebill.stopwatch.model.Session
 import com.timebill.stopwatch.model.UserProfile
 import kotlinx.coroutines.channels.awaitClose
@@ -115,5 +116,47 @@ class FirebaseRepository(private val guestId: String) {
         }
         ref.addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }
+    }
+
+    // Clients
+    suspend fun saveClient(client: Client) {
+        val clientId = client.clientId ?: database.child("clients").push().key ?: return
+        val ref = database.child("clients").child(clientId)
+        
+        if (client.clientId == null) {
+            // New client
+            val clientWithId = client.copy(clientId = clientId, createdAt = System.currentTimeMillis(), updatedAt = System.currentTimeMillis())
+            ref.setValue(clientWithId).await()
+        } else {
+            // Update client - only update changed fields to preserve createdAt
+            val updates = mutableMapOf<String, Any?>()
+            updates["clientName"] = client.clientName
+            updates["mobile"] = client.mobile
+            updates["email"] = client.email
+            updates["address"] = client.address
+            updates["updatedAt"] = System.currentTimeMillis()
+            ref.updateChildren(updates).await()
+        }
+    }
+
+    fun getClients(): Flow<List<Client>> = callbackFlow {
+        val ref = database.child("clients")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val clients = snapshot.children.mapNotNull { it.getValue(Client::class.java) }
+                    .sortedByDescending { it.createdAt }
+                trySend(clients)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                close(error.toException())
+            }
+        }
+        ref.addValueEventListener(listener)
+        awaitClose { ref.removeEventListener(listener) }
+    }
+
+    suspend fun deleteClient(clientId: String) {
+        database.child("clients").child(clientId).removeValue().await()
     }
 }

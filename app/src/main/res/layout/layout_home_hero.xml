@@ -64,7 +64,10 @@
         android:hint="@string/label_client_name"
         app:placeholderText="@string/hint_client_name"
         app:startIconDrawable="@drawable/ic_person_rounded"
-        app:startIconTint="@color/label_text">
+        app:startIconTint="@color/label_text"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/ic_expand_more"
+        app:endIconTint="@color/accent_gold">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etClientName"

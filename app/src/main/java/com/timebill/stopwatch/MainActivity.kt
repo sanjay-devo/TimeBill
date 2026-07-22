@@ -2,6 +2,7 @@ package com.timebill.stopwatch
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
@@ -16,6 +17,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -29,15 +31,19 @@ import com.google.android.material.textfield.TextInputLayout
 import androidx.core.view.GravityCompat
 import java.text.DecimalFormat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.navigation.NavigationView
+import com.timebill.stopwatch.adapter.ClientsAdapter
 import com.timebill.stopwatch.databinding.ActivityMainBinding
 import com.timebill.stopwatch.databinding.LayoutSessionSuccessDialogBinding
+import com.timebill.stopwatch.model.Client
 import com.timebill.stopwatch.model.Session
 import com.timebill.stopwatch.repository.FirebaseRepository
 import com.timebill.stopwatch.utils.PreferenceManager
 import com.timebill.stopwatch.utils.AppUtils
 import com.timebill.stopwatch.utils.HapticFeedbackHelper
 import com.timebill.stopwatch.viewmodel.StopwatchViewModel
+import com.timebill.stopwatch.viewmodel.ClientsViewModel
 import com.timebill.stopwatch.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -49,10 +55,20 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: StopwatchViewModel
+    private lateinit var clientsViewModel: ClientsViewModel
     private var currentBorderColor: Int = 0
     private var isFirstRateLoad = true
     private var isFormatting = false
     private var backPressedTime: Long = 0
+
+    private val selectClientLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val clientName = result.data?.getStringExtra("SELECTED_CLIENT_NAME")
+            if (clientName != null) {
+                binding.homeHero.etClientName.setText(clientName)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,6 +115,7 @@ class MainActivity : AppCompatActivity() {
         val repository = FirebaseRepository(guestId)
         val factory = ViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[StopwatchViewModel::class.java]
+        clientsViewModel = ViewModelProvider(this, factory)[ClientsViewModel::class.java]
     }
 
     private fun observeViewModel() {
@@ -150,6 +167,12 @@ class MainActivity : AppCompatActivity() {
                 updateUI(viewModel.isRunning.value, isPaused)
             }
         }
+
+        lifecycleScope.launch {
+            clientsViewModel.clients.collect {
+                // Just keeping it warm
+            }
+        }
     }
 
     private fun updateUI(isRunning: Boolean, isPaused: Boolean) {
@@ -197,6 +220,14 @@ class MainActivity : AppCompatActivity() {
     private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
 
     private fun setupClickListeners() {
+        binding.homeHero.tilClientName.setEndIconOnClickListener {
+            selectClientLauncher.launch(Intent(this, SelectClientActivity::class.java))
+        }
+
+        binding.homeHero.etClientName.setOnClickListener {
+            selectClientLauncher.launch(Intent(this, SelectClientActivity::class.java))
+        }
+
         binding.homeHero.etHourlyRate.addTextChangedListener { text ->
             val hasText = !text.isNullOrEmpty()
             binding.homeHero.tilHourlyRate.prefixText = if (hasText) getString(R.string.prefix_currency) else null

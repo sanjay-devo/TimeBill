@@ -146,6 +146,27 @@
     <string name="action_save_changes">Save Changes</string>
     <string name="msg_profile_updated">Profile updated successfully</string>
 
+    <!-- Clients Management -->
+    <string name="action_clients">Clients</string>
+    <string name="title_clients">Clients</string>
+    <string name="hint_search_clients">Search clients...</string>
+    <string name="title_no_clients">No Clients Found</string>
+    <string name="subtitle_no_clients">Tap the + button to add your first client.</string>
+    <string name="title_add_client">Add Client</string>
+    <string name="title_edit_client">Edit Client</string>
+    <string name="action_save_client">Save Client</string>
+    <string name="action_delete_client">Delete Client</string>
+    <string name="dialog_delete_client_title">Delete Client?</string>
+    <string name="dialog_delete_client_msg">This action cannot be undone.</string>
+    <string name="msg_client_saved">Client saved successfully</string>
+    <string name="msg_client_deleted">Client deleted successfully</string>
+    <string name="msg_invalid_email">Invalid email format</string>
+    <string name="label_edit">Edit</string>
+    <string name="label_delete">Delete</string>
+    <string name="title_select_client">Select Client</string>
+    <string name="action_select_client">Select Client</string>
+    <string name="hint_full_address">Full Address</string>
+
     <!-- Session Details -->
     <string name="title_session_details">Session Details</string>
     <string name="label_session_summary_section">Session Summary</string>

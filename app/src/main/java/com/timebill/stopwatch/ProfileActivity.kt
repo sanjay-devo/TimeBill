@@ -67,6 +67,10 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(this, EditProfileActivity::class.java))
         }
 
+        binding.btnClients.setOnClickListener {
+            startActivity(Intent(this, ClientsActivity::class.java))
+        }
+
         binding.btnDeleteAllData.setOnClickListener {
             showDeleteAllDataDialog()
         }

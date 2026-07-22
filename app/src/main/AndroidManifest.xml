@@ -60,6 +60,22 @@
             android:theme="@style/Theme.TimeBill" />
 
         <activity
+            android:name=".ClientsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TimeBill" />
+
+        <activity
+            android:name=".SelectClientActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TimeBill" />
+
+        <activity
+            android:name=".AddEditClientActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TimeBill"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".SessionDetailsActivity"
             android:exported="false"
             android:theme="@style/Theme.TimeBill"
