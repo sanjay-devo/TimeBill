@@ -166,6 +166,7 @@
     <string name="title_select_client">Select Client</string>
     <string name="action_select_client">Select Client</string>
     <string name="hint_full_address">Full Address</string>
+    <string name="label_add_more_details">Add More Details</string>
 
     <!-- Session Details -->
     <string name="title_session_details">Session Details</string>

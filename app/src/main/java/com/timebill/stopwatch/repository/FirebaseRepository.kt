@@ -43,6 +43,10 @@ class FirebaseRepository(private val guestId: String) {
         database.child("sessions").child(sessionId).updateChildren(updates).await()
     }
 
+    suspend fun updateSessionDetails(sessionId: String, updates: Map<String, Any?>) {
+        database.child("sessions").child(sessionId).updateChildren(updates).await()
+    }
+
     fun getSessions(): Flow<List<Session>> = callbackFlow {
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

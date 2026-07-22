@@ -11,6 +11,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -23,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.timebill.stopwatch.databinding.ActivitySessionDetailsBinding
+import com.timebill.stopwatch.model.Client
 import com.timebill.stopwatch.model.Session
 import com.timebill.stopwatch.model.UserProfile
 import com.timebill.stopwatch.repository.FirebaseRepository
@@ -43,6 +46,7 @@ class SessionDetailsActivity : AppCompatActivity() {
     private var currentSession: Session? = null
     private var userProfile: UserProfile? = null
     private var sessionId: String? = null
+    private var allClients: List<Client> = emptyList()
 
     private var isSessionSummaryExpanded = true
     private var isBillingInfoExpanded = false
@@ -118,6 +122,21 @@ class SessionDetailsActivity : AppCompatActivity() {
             saveProfileData()
         }
 
+        binding.cbMoreDetails.setOnCheckedChangeListener { _, isChecked ->
+            binding.layoutMoreDetails.visibility = if (isChecked) View.VISIBLE else View.GONE
+            if (isChecked) {
+                autoFillClientDetails(binding.etClientName.text.toString())
+            }
+        }
+
+        binding.etClientName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                autoFillClientDetails(s.toString())
+            }
+        })
+
         binding.bottomAppBar.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.action_view_receipt -> {
@@ -190,10 +209,35 @@ class SessionDetailsActivity : AppCompatActivity() {
                 populateProfileData(profile)
             }
         }
+
+        lifecycleScope.launch {
+            viewModel.getClients().collectLatest { clients ->
+                allClients = clients
+            }
+        }
+    }
+
+    private fun autoFillClientDetails(name: String) {
+        val trimmedName = name.trim()
+        if (trimmedName.isEmpty()) return
+        val client = allClients.find { it.clientName?.trim()?.equals(trimmedName, ignoreCase = true) == true }
+        client?.let {
+            if (binding.etClientMobileSD.text.isNullOrEmpty()) binding.etClientMobileSD.setText(it.mobile)
+            if (binding.etClientEmailSD.text.isNullOrEmpty()) binding.etClientEmailSD.setText(it.email)
+            if (binding.etClientAddressSD.text.isNullOrEmpty()) binding.etClientAddressSD.setText(it.address)
+        }
     }
 
     private fun populateSessionData(session: Session) {
         binding.etClientName.setText(session.clientName)
+        binding.etClientMobileSD.setText(session.clientMobile)
+        binding.etClientEmailSD.setText(session.clientEmail)
+        binding.etClientAddressSD.setText(session.clientAddress)
+
+        if (!session.clientMobile.isNullOrEmpty() || !session.clientEmail.isNullOrEmpty() || !session.clientAddress.isNullOrEmpty()) {
+            binding.cbMoreDetails.isChecked = true
+        }
+
         binding.etSessionId.setText(session.id)
         binding.etReceiptNumberSummary.setText(session.receiptNumber)
         
@@ -278,17 +322,76 @@ class SessionDetailsActivity : AppCompatActivity() {
         val session = currentSession ?: return
         val profile = userProfile ?: UserProfile()
 
-        val receiptNum = if (session.receiptNumber.isNullOrEmpty()) {
-            val newNum = generateReceiptNumber()
-            sessionId?.let { viewModel.updateSessionStatus(it, session.status ?: "Work Completed", newNum) }
-            newNum
-        } else {
-            session.receiptNumber!!
+        // Capture current values from UI
+        val name = binding.etClientName.text.toString().trim()
+        val mobile = binding.etClientMobileSD.text.toString().trim()
+        val email = binding.etClientEmailSD.text.toString().trim()
+        val address = binding.etClientAddressSD.text.toString().trim()
+
+        val updates = mutableMapOf<String, Any?>()
+        updates["clientName"] = name
+        updates["clientMobile"] = mobile
+        updates["clientEmail"] = email
+        updates["clientAddress"] = address
+
+        sessionId?.let { id ->
+            viewModel.updateSessionDetails(id, updates)
+            // Update local snapshot for PDF generation
+            currentSession = session.copy(
+                clientName = name,
+                clientMobile = mobile,
+                clientEmail = email,
+                clientAddress = address
+            )
+            
+            // Auto create/update client
+            autoCreateOrUpdateClient(name, mobile, email, address)
         }
 
-        val updatedSession = session.copy(receiptNumber = receiptNum)
-        val pdfDocument = createPdfDocument(updatedSession, profile)
+        val updatedSession = currentSession!!
+        val receiptNum = if (updatedSession.receiptNumber.isNullOrEmpty()) {
+            val newNum = generateReceiptNumber()
+            sessionId?.let { viewModel.updateSessionStatus(it, updatedSession.status ?: "Work Completed", newNum) }
+            newNum
+        } else {
+            updatedSession.receiptNumber!!
+        }
+
+        val sessionForPdf = updatedSession.copy(receiptNumber = receiptNum)
+        val pdfDocument = createPdfDocument(sessionForPdf, profile)
         handlePdfAction(pdfDocument, receiptNum, action)
+    }
+
+    private fun autoCreateOrUpdateClient(name: String, mobile: String, email: String, address: String) {
+        if (name.isEmpty()) return
+        val existingClient = allClients.find { it.clientName?.equals(name, ignoreCase = true) == true }
+        if (existingClient == null) {
+            val newClient = Client(
+                clientName = name,
+                mobile = mobile,
+                email = email,
+                address = address
+            )
+            lifecycleScope.launch {
+                FirebaseRepository(PreferenceManager(this@SessionDetailsActivity).getGuestId()).saveClient(newClient)
+            }
+        } else {
+            // Update only empty fields
+            val updatedMobile = if (existingClient.mobile.isNullOrEmpty()) mobile else existingClient.mobile
+            val updatedEmail = if (existingClient.email.isNullOrEmpty()) email else existingClient.email
+            val updatedAddress = if (existingClient.address.isNullOrEmpty()) address else existingClient.address
+
+            if (updatedMobile != existingClient.mobile || updatedEmail != existingClient.email || updatedAddress != existingClient.address) {
+                val updatedClient = existingClient.copy(
+                    mobile = updatedMobile,
+                    email = updatedEmail,
+                    address = updatedAddress
+                )
+                lifecycleScope.launch {
+                    FirebaseRepository(PreferenceManager(this@SessionDetailsActivity).getGuestId()).saveClient(updatedClient)
+                }
+            }
+        }
     }
 
     private fun createPdfDocument(session: Session, profile: UserProfile): PdfDocument {
@@ -386,6 +489,22 @@ class SessionDetailsActivity : AppCompatActivity() {
         rightY += 20f
         titlePaint.textSize = 14f
         canvas.drawText(session.clientName ?: "Unnamed Client", rightColX, rightY, titlePaint)
+        
+        // Add captured client details from session to PDF
+        rightY += 18f
+        normalPaint.textSize = 11f
+        if (!session.clientMobile.isNullOrEmpty()) {
+            canvas.drawText(session.clientMobile, rightColX, rightY, normalPaint)
+            rightY += 15f
+        }
+        if (!session.clientEmail.isNullOrEmpty()) {
+            canvas.drawText(session.clientEmail, rightColX, rightY, normalPaint)
+            rightY += 15f
+        }
+        if (!session.clientAddress.isNullOrEmpty()) {
+            canvas.drawText(session.clientAddress, rightColX, rightY, normalPaint)
+            rightY += 15f
+        }
 
         yPos = maxOf(leftY, rightY) + 50f
 
