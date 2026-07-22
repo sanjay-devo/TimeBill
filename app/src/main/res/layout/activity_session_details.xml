@@ -33,9 +33,9 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Section 1: Session Summary -->
+            <!-- Section 1: Client Details -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardSessionSummary"
+                android:id="@+id/cardClientDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -48,7 +48,7 @@
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:id="@+id/headerSessionSummary"
+                        android:id="@+id/headerClientDetails"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?attr/colorSurfaceVariant"
@@ -62,19 +62,20 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/label_session_summary_section"
+                            android:text="@string/label_client_details_section"
                             android:textAppearance="?attr/textAppearanceTitleMedium"
                             android:textStyle="bold" />
 
                         <ImageView
-                            android:id="@+id/ivExpandSessionSummary"
+                            android:id="@+id/ivExpandClientDetails"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:src="@drawable/ic_expand_less" />
+                            android:src="@drawable/ic_expand_less"
+                            android:contentDescription="@string/label_client_details_section" />
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/contentSessionSummary"
+                        android:id="@+id/contentClientDetails"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -168,6 +169,73 @@
                                 android:layout_height="wrap_content"
                                 android:inputType="text" />
                         </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:hint="@string/label_status">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/atvStatus"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Section 2: Session Summary -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSessionSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/headerSessionSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/colorSurfaceVariant"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/label_session_summary_section"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/ivExpandSessionSummary"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_expand_more"
+                            android:contentDescription="@string/label_session_summary_section" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/contentSessionSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:visibility="gone">
 
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -299,20 +367,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:enabled="false" />
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:hint="@string/label_status">
-
-                            <AutoCompleteTextView
-                                android:id="@+id/atvStatus"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="none" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>

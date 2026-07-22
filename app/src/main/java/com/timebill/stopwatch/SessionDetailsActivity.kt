@@ -48,7 +48,8 @@ class SessionDetailsActivity : AppCompatActivity() {
     private var sessionId: String? = null
     private var allClients: List<Client> = emptyList()
 
-    private var isSessionSummaryExpanded = true
+    private var isClientDetailsExpanded = true
+    private var isSessionSummaryExpanded = false
     private var isBillingInfoExpanded = false
     private var isReceiptInfoExpanded = false
 
@@ -65,7 +66,8 @@ class SessionDetailsActivity : AppCompatActivity() {
         }
 
         if (savedInstanceState != null) {
-            isSessionSummaryExpanded = savedInstanceState.getBoolean("isSessionSummaryExpanded", true)
+            isClientDetailsExpanded = savedInstanceState.getBoolean("isClientDetailsExpanded", true)
+            isSessionSummaryExpanded = savedInstanceState.getBoolean("isSessionSummaryExpanded", false)
             isBillingInfoExpanded = savedInstanceState.getBoolean("isBillingInfoExpanded", false)
             isReceiptInfoExpanded = savedInstanceState.getBoolean("isReceiptInfoExpanded", false)
         }
@@ -80,6 +82,7 @@ class SessionDetailsActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        outState.putBoolean("isClientDetailsExpanded", isClientDetailsExpanded)
         outState.putBoolean("isSessionSummaryExpanded", isSessionSummaryExpanded)
         outState.putBoolean("isBillingInfoExpanded", isBillingInfoExpanded)
         outState.putBoolean("isReceiptInfoExpanded", isReceiptInfoExpanded)
@@ -102,6 +105,11 @@ class SessionDetailsActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.toolbar.setNavigationOnClickListener { finish() }
+
+        binding.headerClientDetails.setOnClickListener {
+            isClientDetailsExpanded = !isClientDetailsExpanded
+            updateCollapseStates()
+        }
 
         binding.headerSessionSummary.setOnClickListener {
             isSessionSummaryExpanded = !isSessionSummaryExpanded
@@ -161,6 +169,7 @@ class SessionDetailsActivity : AppCompatActivity() {
     }
 
     private fun updateCollapseStates() {
+        toggleSection(binding.contentClientDetails, binding.ivExpandClientDetails, isClientDetailsExpanded)
         toggleSection(binding.contentSessionSummary, binding.ivExpandSessionSummary, isSessionSummaryExpanded)
         toggleSection(binding.contentBillingInfo, binding.ivExpandBillingInfo, isBillingInfoExpanded)
         toggleSection(binding.contentReceiptInfo, binding.ivExpandReceiptInfo, isReceiptInfoExpanded)
