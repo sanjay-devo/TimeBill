@@ -1,12 +1,16 @@
 package com.timebill.stopwatch
 
+import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -274,24 +278,25 @@ class SessionDetailsActivity : AppCompatActivity() {
         val session = currentSession ?: return
         val profile = userProfile ?: UserProfile()
 
-        if (session.receiptNumber.isNullOrEmpty()) {
-            val newReceiptNum = generateReceiptNumber()
-            sessionId?.let { viewModel.updateSessionStatus(it, session.status ?: "Work Completed", newReceiptNum) }
-            // Wait for update or just use the new number for now
-            session.copy(receiptNumber = newReceiptNum).let { updatedSession ->
-                createPdf(updatedSession, profile, action)
-            }
+        val receiptNum = if (session.receiptNumber.isNullOrEmpty()) {
+            val newNum = generateReceiptNumber()
+            sessionId?.let { viewModel.updateSessionStatus(it, session.status ?: "Work Completed", newNum) }
+            newNum
         } else {
-            createPdf(session, profile, action)
+            session.receiptNumber!!
         }
+
+        val updatedSession = session.copy(receiptNumber = receiptNum)
+        val pdfDocument = createPdfDocument(updatedSession, profile)
+        handlePdfAction(pdfDocument, receiptNum, action)
     }
 
-    private fun createPdf(session: Session, profile: UserProfile, action: Action) {
+    private fun createPdfDocument(session: Session, profile: UserProfile): PdfDocument {
         val pdfDocument = PdfDocument()
         val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
         val page = pdfDocument.startPage(pageInfo)
         val canvas = page.canvas
-        
+
         val cream = Color.parseColor("#F8F4EF")
         val gold = Color.parseColor("#D4AE7A")
         val darkBrown = Color.parseColor("#2E1A17")
@@ -311,112 +316,158 @@ class SessionDetailsActivity : AppCompatActivity() {
         }
         val labelPaint = Paint().apply {
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-            textSize = 12f
+            textSize = 10f
             color = labelColor
+            letterSpacing = 0.1f
         }
 
         var yPos = 60f
-        
-        // Logo & Brand
+
+        // Header - Left (Brand)
+        titlePaint.textSize = 24f
         canvas.drawText("TimeBill", 50f, yPos, titlePaint)
-        yPos += 25f
-        normalPaint.textSize = 14f
-        canvas.drawText("Stopwatch & Billing", 50f, yPos, normalPaint)
-        
-        // Receipt Header
-        titlePaint.textSize = 28f
-        titlePaint.textAlign = Paint.Align.RIGHT
-        canvas.drawText("Receipt", 545f, 70f, titlePaint)
-        titlePaint.textAlign = Paint.Align.LEFT
-        
-        yPos += 40f
-        paint.color = gold
-        canvas.drawRect(50f, yPos, 545f, yPos + 3f, paint)
-        yPos += 30f
-
-        // Receipt Details
-        canvas.drawText("Receipt No:", 50f, yPos, labelPaint)
-        canvas.drawText(session.receiptNumber ?: "-", 150f, yPos, normalPaint)
-        
-        yPos += 20f
-        canvas.drawText("Receipt Date:", 50f, yPos, labelPaint)
-        canvas.drawText(SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(session.createdAt ?: session.timestamp ?: 0L)), 150f, yPos, normalPaint)
-        
-        yPos += 40f
-        canvas.drawRect(50f, yPos, 545f, yPos + 1f, paint)
-        yPos += 30f
-
-        // From Section
-        canvas.drawText("FROM", 50f, yPos, labelPaint)
-        yPos += 25f
-        titlePaint.textSize = 16f
-        canvas.drawText(profile.fullName ?: "Your Name", 50f, yPos, titlePaint)
         yPos += 20f
         normalPaint.textSize = 12f
-        canvas.drawText(profile.mobile ?: "", 50f, yPos, normalPaint)
-        yPos += 15f
-        canvas.drawText(profile.email ?: "", 50f, yPos, normalPaint)
-        yPos += 15f
-        canvas.drawText("${profile.addressLine1}${if (profile.addressLine2?.isNotEmpty() == true) ", " + profile.addressLine2 else ""}", 50f, yPos, normalPaint)
-        yPos += 15f
-        canvas.drawText("${profile.city}, ${profile.state} - ${profile.pinCode}", 50f, yPos, normalPaint)
+        normalPaint.color = labelColor
+        canvas.drawText("Stopwatch & Billing", 50f, yPos, normalPaint)
+
+        // Header - Right (Receipt Info)
+        val rightX = 545f
+        titlePaint.textAlign = Paint.Align.RIGHT
+        titlePaint.textSize = 28f
+        titlePaint.color = darkBrown
+        canvas.drawText("RECEIPT", rightX, 60f, titlePaint)
+
+        normalPaint.textAlign = Paint.Align.RIGHT
+        normalPaint.color = Color.BLACK
+        normalPaint.textSize = 12f
+        canvas.drawText("Receipt No: ${session.receiptNumber ?: "-"}", rightX, 85f, normalPaint)
+        canvas.drawText("Receipt Date: ${SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(session.createdAt ?: session.timestamp ?: 0L))}", rightX, 105f, normalPaint)
+        
+        titlePaint.textAlign = Paint.Align.LEFT
+        normalPaint.textAlign = Paint.Align.LEFT
+        normalPaint.color = Color.BLACK
+
+        yPos = 130f
+        paint.color = gold
+        canvas.drawRect(50f, yPos, 545f, yPos + 2f, paint)
+        yPos += 40f
+
+        // FROM & BILL TO (Side by Side)
+        val rightColX = 300f
+
+        // FROM Section
+        var leftY = yPos
+        canvas.drawText("FROM", 50f, leftY, labelPaint)
+        leftY += 20f
+        titlePaint.textSize = 14f
+        canvas.drawText(profile.fullName ?: "Your Name", 50f, leftY, titlePaint)
+        leftY += 18f
+        normalPaint.textSize = 11f
+        canvas.drawText(profile.mobile ?: "", 50f, leftY, normalPaint)
+        leftY += 15f
+        canvas.drawText(profile.email ?: "", 50f, leftY, normalPaint)
+        leftY += 15f
+        canvas.drawText(profile.addressLine1 ?: "", 50f, leftY, normalPaint)
+        if (!profile.addressLine2.isNullOrEmpty()) {
+            leftY += 15f
+            canvas.drawText(profile.addressLine2!!, 50f, leftY, normalPaint)
+        }
+        leftY += 15f
+        canvas.drawText("${profile.city ?: ""}, ${profile.state ?: ""} - ${profile.pinCode ?: ""}", 50f, leftY, normalPaint)
         if (!profile.gstNumber.isNullOrEmpty()) {
-            yPos += 15f
-            canvas.drawText("GST: ${profile.gstNumber}", 50f, yPos, normalPaint)
+            leftY += 15f
+            canvas.drawText("GST: ${profile.gstNumber}", 50f, leftY, normalPaint)
         }
 
-        yPos += 40f
-        // Bill To Section
-        canvas.drawText("BILL TO", 50f, yPos, labelPaint)
+        // BILL TO Section
+        var rightY = yPos
+        canvas.drawText("BILL TO", rightColX, rightY, labelPaint)
+        rightY += 20f
+        titlePaint.textSize = 14f
+        canvas.drawText(session.clientName ?: "Unnamed Client", rightColX, rightY, titlePaint)
+
+        yPos = maxOf(leftY, rightY) + 50f
+
+        // SESSION DETAILS TABLE
+        // Header
+        paint.color = darkBrown
+        canvas.drawRect(50f, yPos, 545f, yPos + 30f, paint)
+        
+        normalPaint.color = Color.WHITE
+        normalPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        normalPaint.textSize = 11f
+        canvas.drawText("Description", 60f, yPos + 20f, normalPaint)
+        canvas.drawText("Duration", 280f, yPos + 20f, normalPaint)
+        canvas.drawText("Rate", 400f, yPos + 20f, normalPaint)
+        canvas.drawText("Amount", 480f, yPos + 20f, normalPaint)
+        
+        yPos += 30f
+        // Row
+        paint.color = Color.WHITE
+        canvas.drawRect(50f, yPos, 545f, yPos + 40f, paint)
+        
+        // Borders
+        paint.color = Color.LTGRAY
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = 0.5f
+        canvas.drawRect(50f, yPos - 30f, 545f, yPos + 40f, paint)
+        canvas.drawLine(270f, yPos - 30f, 270f, yPos + 40f, paint)
+        canvas.drawLine(390f, yPos - 30f, 390f, yPos + 40f, paint)
+        canvas.drawLine(470f, yPos - 30f, 470f, yPos + 40f, paint)
+        paint.style = Paint.Style.FILL
+
+        normalPaint.color = Color.BLACK
+        normalPaint.typeface = Typeface.DEFAULT
+        canvas.drawText("Consultation Work", 60f, yPos + 25f, normalPaint)
+        canvas.drawText(formatDuration(session.durationMillis ?: 0L), 280f, yPos + 25f, normalPaint)
+        canvas.drawText(String.format(Locale.getDefault(), "₹%.0f/hr", session.hourlyRate ?: 0.0), 400f, yPos + 25f, normalPaint)
+        canvas.drawText(String.format(Locale.getDefault(), "₹%.2f", session.earnings ?: 0.0), 480f, yPos + 25f, normalPaint)
+
+        yPos += 70f
+
+        // PAYMENT SUMMARY
+        val summaryX = 350f
+        val summaryWidth = 195f
+        
+        canvas.drawText("Payment Summary", summaryX, yPos, labelPaint)
+        yPos += 15f
+        
+        paint.color = Color.WHITE
+        canvas.drawRect(summaryX, yPos, summaryX + summaryWidth, yPos + 80f, paint)
+        paint.color = Color.LTGRAY
+        paint.style = Paint.Style.STROKE
+        canvas.drawRect(summaryX, yPos, summaryX + summaryWidth, yPos + 80f, paint)
+        paint.style = Paint.Style.FILL
+        
+        yPos += 20f
+        normalPaint.textSize = 12f
+        canvas.drawText("Subtotal", summaryX + 10f, yPos, normalPaint)
+        val subtotal = String.format(Locale.getDefault(), "₹%.2f", session.earnings ?: 0.0)
+        canvas.drawText(subtotal, 545f - 10f - normalPaint.measureText(subtotal), yPos, normalPaint)
+        
+        yPos += 20f
+        canvas.drawText("Tax", summaryX + 10f, yPos, normalPaint)
+        canvas.drawText("₹0.00", 545f - 10f - normalPaint.measureText("₹0.00"), yPos, normalPaint)
+        
         yPos += 25f
-        titlePaint.textSize = 16f
-        canvas.drawText(session.clientName ?: "Unnamed Client", 50f, yPos, titlePaint)
-
-        yPos += 40f
-        canvas.drawRect(50f, yPos, 545f, yPos + 1f, paint)
-        yPos += 30f
-
-        // Session Details Section
-        canvas.drawText("SESSION DETAILS", 50f, yPos, labelPaint)
-        yPos += 30f
+        paint.color = gold
+        canvas.drawRect(summaryX + 5f, yPos - 18f, summaryX + summaryWidth - 5f, yPos + 7f, paint)
         
-        val detailsX1 = 50f
-        val detailsX2 = 200f
-        
-        canvas.drawText("Start Time:", detailsX1, yPos, labelPaint)
-        canvas.drawText(SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(session.startTime ?: 0L)), detailsX2, yPos, normalPaint)
-        yPos += 20f
-        canvas.drawText("End Time:", detailsX1, yPos, labelPaint)
-        canvas.drawText(if (session.endTime != 0L) SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(session.endTime ?: 0L)) else "-", detailsX2, yPos, normalPaint)
-        yPos += 20f
-        canvas.drawText("Duration:", detailsX1, yPos, labelPaint)
-        canvas.drawText(formatDuration(session.durationMillis ?: 0L), detailsX2, yPos, normalPaint)
-        yPos += 20f
-        canvas.drawText("Hourly Rate:", detailsX1, yPos, labelPaint)
-        canvas.drawText(String.format(Locale.getDefault(), "₹%.2f/hr", session.hourlyRate ?: 0.0), detailsX2, yPos, normalPaint)
-        yPos += 20f
-        canvas.drawText("Status:", detailsX1, yPos, labelPaint)
-        canvas.drawText(session.status ?: "", detailsX2, yPos, normalPaint)
-
-        yPos += 40f
-        canvas.drawRect(50f, yPos, 545f, yPos + 1f, paint)
-        yPos += 30f
-
-        // Payment Summary
-        canvas.drawText("PAYMENT SUMMARY", 50f, yPos, labelPaint)
-        yPos += 30f
-        titlePaint.textSize = 20f
-        canvas.drawText("Total Earnings:", 50f, yPos, titlePaint)
-        titlePaint.textAlign = Paint.Align.RIGHT
-        canvas.drawText(String.format(Locale.getDefault(), "₹%.2f", session.earnings ?: 0.0), 545f, yPos, titlePaint)
-        titlePaint.textAlign = Paint.Align.LEFT
+        titlePaint.textSize = 14f
+        titlePaint.color = darkBrown
+        canvas.drawText("Total", summaryX + 10f, yPos, titlePaint)
+        val totalStr = String.format(Locale.getDefault(), "₹%.2f", session.earnings ?: 0.0)
+        canvas.drawText(totalStr, 545f - 10f - titlePaint.measureText(totalStr), yPos, titlePaint)
 
         // Footer
         yPos = 760f
+        paint.color = gold
         canvas.drawRect(50f, yPos, 545f, yPos + 0.5f, paint)
         yPos += 25f
         normalPaint.textAlign = Paint.Align.CENTER
         normalPaint.textSize = 10f
+        normalPaint.color = labelColor
         canvas.drawText("Generated by TimeBill – Stopwatch & Billing", 297f, yPos, normalPaint)
         yPos += 15f
         canvas.drawText("https://timebill.indiacybercafe.com | support@timebill.indiacybercafe.com", 297f, yPos, normalPaint)
@@ -426,26 +477,75 @@ class SessionDetailsActivity : AppCompatActivity() {
         canvas.drawText("Automatically Generated Receipt", 297f, yPos, labelPaint)
 
         pdfDocument.finishPage(page)
+        return pdfDocument
+    }
 
-        val fileName = "Receipt_${session.receiptNumber}.pdf"
-        val file = if (action == Action.DOWNLOAD) {
-            File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
-        } else {
-            File(cacheDir, fileName)
-        }
-
+    private fun handlePdfAction(pdfDocument: PdfDocument, receiptNumber: String, action: Action) {
+        val fileName = "Receipt_$receiptNumber.pdf"
+        
+        // Save to cache for VIEW and SHARE
+        val tempFile = File(cacheDir, fileName)
         try {
-            pdfDocument.writeTo(FileOutputStream(file))
-            pdfDocument.close()
+            FileOutputStream(tempFile).use { pdfDocument.writeTo(it) }
             
             when (action) {
-                Action.VIEW -> openInternalPdfViewer(file)
-                Action.DOWNLOAD -> Toast.makeText(this, getString(R.string.msg_pdf_saved), Toast.LENGTH_LONG).show()
-                Action.SHARE -> sharePdfFile(file)
+                Action.VIEW -> {
+                    openInternalPdfViewer(tempFile)
+                    pdfDocument.close()
+                }
+                Action.SHARE -> {
+                    sharePdfFile(tempFile)
+                    pdfDocument.close()
+                }
+                Action.DOWNLOAD -> {
+                    savePdfToDownloads(pdfDocument, fileName)
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Action failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            pdfDocument.close()
+        }
+    }
+
+    private fun savePdfToDownloads(pdfDocument: PdfDocument, fileName: String) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/TimeBill")
+                }
+                val resolver = contentResolver
+                val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+                if (uri != null) {
+                    resolver.openOutputStream(uri)?.use { outputStream ->
+                        pdfDocument.writeTo(outputStream)
+                    }
+                    Toast.makeText(this, "Receipt saved successfully.", Toast.LENGTH_LONG).show()
+                } else {
+                    throw Exception("Failed to create MediaStore entry")
+                }
+            } else {
+                val directory = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "TimeBill")
+                if (!directory.exists() && !directory.mkdirs()) {
+                    throw Exception("Failed to create directory")
+                }
+                val file = File(directory, fileName)
+                FileOutputStream(file).use { outputStream ->
+                    pdfDocument.writeTo(outputStream)
+                }
+                if (file.exists()) {
+                    Toast.makeText(this, "Receipt saved successfully.", Toast.LENGTH_LONG).show()
+                } else {
+                    throw Exception("File not found after saving")
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Save failed: ${e.message}", Toast.LENGTH_SHORT).show()
+        } finally {
+            pdfDocument.close()
         }
     }
 
