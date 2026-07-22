@@ -256,10 +256,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
-                            android:hint="@string/label_receipt_number">
+                            android:hint="@string/label_invoice_number">
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etReceiptNumberSummary"
+                                android:id="@+id/etInvoiceNumberSummary"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:enabled="false" />
@@ -576,9 +576,9 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Section 4: Receipt Information -->
+            <!-- Section 4: Invoice Information -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardReceiptInfo"
+                android:id="@+id/cardInvoiceInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="100dp"
@@ -591,7 +591,7 @@
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:id="@+id/headerReceiptInfo"
+                        android:id="@+id/headerInvoiceInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?attr/colorSurfaceVariant"
@@ -605,19 +605,19 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/label_receipt_info_section"
+                            android:text="@string/label_invoice_info_section"
                             android:textAppearance="?attr/textAppearanceTitleMedium"
                             android:textStyle="bold" />
 
                         <ImageView
-                            android:id="@+id/ivExpandReceiptInfo"
+                            android:id="@+id/ivExpandInvoiceInfo"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_expand_more" />
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/contentReceiptInfo"
+                        android:id="@+id/contentInvoiceInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -629,10 +629,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
-                            android:hint="@string/label_receipt_number">
+                            android:hint="@string/label_invoice_number">
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etReceiptNumber"
+                                android:id="@+id/etInvoiceNumber"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:enabled="false" />
@@ -643,10 +643,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
-                            android:hint="@string/label_receipt_date">
+                            android:hint="@string/label_invoice_date">
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etReceiptDate"
+                                android:id="@+id/etInvoiceDate"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:enabled="false" />

@@ -51,7 +51,7 @@ class SessionDetailsActivity : AppCompatActivity() {
     private var isClientDetailsExpanded = true
     private var isSessionSummaryExpanded = false
     private var isBillingInfoExpanded = false
-    private var isReceiptInfoExpanded = false
+    private var isInvoiceInfoExpanded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +69,7 @@ class SessionDetailsActivity : AppCompatActivity() {
             isClientDetailsExpanded = savedInstanceState.getBoolean("isClientDetailsExpanded", true)
             isSessionSummaryExpanded = savedInstanceState.getBoolean("isSessionSummaryExpanded", false)
             isBillingInfoExpanded = savedInstanceState.getBoolean("isBillingInfoExpanded", false)
-            isReceiptInfoExpanded = savedInstanceState.getBoolean("isReceiptInfoExpanded", false)
+            isInvoiceInfoExpanded = savedInstanceState.getBoolean("isInvoiceInfoExpanded", false)
         }
 
         setupWindowInsets()
@@ -85,7 +85,7 @@ class SessionDetailsActivity : AppCompatActivity() {
         outState.putBoolean("isClientDetailsExpanded", isClientDetailsExpanded)
         outState.putBoolean("isSessionSummaryExpanded", isSessionSummaryExpanded)
         outState.putBoolean("isBillingInfoExpanded", isBillingInfoExpanded)
-        outState.putBoolean("isReceiptInfoExpanded", isReceiptInfoExpanded)
+        outState.putBoolean("isInvoiceInfoExpanded", isInvoiceInfoExpanded)
     }
 
     private fun setupWindowInsets() {
@@ -121,8 +121,8 @@ class SessionDetailsActivity : AppCompatActivity() {
             updateCollapseStates()
         }
 
-        binding.headerReceiptInfo.setOnClickListener {
-            isReceiptInfoExpanded = !isReceiptInfoExpanded
+        binding.headerInvoiceInfo.setOnClickListener {
+            isInvoiceInfoExpanded = !isInvoiceInfoExpanded
             updateCollapseStates()
         }
 
@@ -147,7 +147,7 @@ class SessionDetailsActivity : AppCompatActivity() {
 
         binding.bottomAppBar.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.action_view_receipt -> {
+                R.id.action_view_invoice -> {
                     generateAndHandlePdf(Action.VIEW)
                     true
                 }
@@ -155,7 +155,7 @@ class SessionDetailsActivity : AppCompatActivity() {
                     generateAndHandlePdf(Action.DOWNLOAD)
                     true
                 }
-                R.id.action_share_receipt -> {
+                R.id.action_share_invoice -> {
                     generateAndHandlePdf(Action.SHARE)
                     true
                 }
@@ -172,7 +172,7 @@ class SessionDetailsActivity : AppCompatActivity() {
         toggleSection(binding.contentClientDetails, binding.ivExpandClientDetails, isClientDetailsExpanded)
         toggleSection(binding.contentSessionSummary, binding.ivExpandSessionSummary, isSessionSummaryExpanded)
         toggleSection(binding.contentBillingInfo, binding.ivExpandBillingInfo, isBillingInfoExpanded)
-        toggleSection(binding.contentReceiptInfo, binding.ivExpandReceiptInfo, isReceiptInfoExpanded)
+        toggleSection(binding.contentInvoiceInfo, binding.ivExpandInvoiceInfo, isInvoiceInfoExpanded)
     }
 
     private fun toggleSection(content: View, icon: android.widget.ImageView, expand: Boolean) {
@@ -194,8 +194,8 @@ class SessionDetailsActivity : AppCompatActivity() {
         binding.atvStatus.setOnItemClickListener { _, _, position, _ ->
             val newStatus = statuses[position]
             sessionId?.let { id ->
-                val receiptNum = if (currentSession?.receiptNumber.isNullOrEmpty()) generateReceiptNumber() else currentSession?.receiptNumber!!
-                viewModel.updateSessionStatus(id, newStatus, receiptNum)
+                val invoiceNum = if (!currentSession?.invoiceNumber.isNullOrEmpty()) currentSession?.invoiceNumber!! else if (!currentSession?.receiptNumber.isNullOrEmpty()) currentSession?.receiptNumber!! else generateInvoiceNumber()
+                viewModel.updateSessionStatus(id, newStatus, invoiceNum)
             }
         }
     }
@@ -248,7 +248,7 @@ class SessionDetailsActivity : AppCompatActivity() {
         binding.layoutMoreDetails.visibility = if (binding.cbMoreDetails.isChecked) View.VISIBLE else View.GONE
 
         binding.etSessionId.setText(session.id)
-        binding.etReceiptNumberSummary.setText(session.receiptNumber)
+        binding.etInvoiceNumberSummary.setText(if (!session.invoiceNumber.isNullOrEmpty()) session.invoiceNumber else session.receiptNumber)
         
         val sdfDate = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
         val sdfTime = SimpleDateFormat("hh:mm a", Locale.getDefault())
@@ -262,11 +262,11 @@ class SessionDetailsActivity : AppCompatActivity() {
         
         binding.atvStatus.setText(session.status, false)
 
-        binding.etReceiptNumber.setText(session.receiptNumber)
+        binding.etInvoiceNumber.setText(if (!session.invoiceNumber.isNullOrEmpty()) session.invoiceNumber else session.receiptNumber)
         
-        val receiptTs = if (session.receiptTimestamp != 0L) session.receiptTimestamp!! else (session.createdAt ?: session.timestamp ?: 0L)
-        binding.etReceiptDate.setText(sdfDate.format(Date(receiptTs)))
-        binding.etGeneratedTime.setText(sdfTime.format(Date(receiptTs)))
+        val invoiceTs = if (session.invoiceTimestamp != 0L) session.invoiceTimestamp!! else if (session.receiptTimestamp != 0L) session.receiptTimestamp!! else (session.createdAt ?: session.timestamp ?: 0L)
+        binding.etInvoiceDate.setText(sdfDate.format(Date(invoiceTs)))
+        binding.etGeneratedTime.setText(sdfTime.format(Date(invoiceTs)))
     }
 
     private fun populateProfileData(profile: UserProfile?) {
@@ -300,7 +300,7 @@ class SessionDetailsActivity : AppCompatActivity() {
         Toast.makeText(this, R.string.msg_profile_updated, Toast.LENGTH_SHORT).show()
     }
 
-    private fun generateReceiptNumber(): String {
+    private fun generateInvoiceNumber(): String {
         val date = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
         val random = (100000..999999).random()
         return "TB-$date-$random"
@@ -350,9 +350,9 @@ class SessionDetailsActivity : AppCompatActivity() {
         updates["workName"] = workName
         updates["hasClientDetails"] = hasDetails
         
-        // Generate real receipt timestamp
+        // Generate real invoice timestamp
         val currentTimestamp = System.currentTimeMillis()
-        updates["receiptTimestamp"] = currentTimestamp
+        updates["invoiceTimestamp"] = currentTimestamp
 
         sessionId?.let { id ->
             viewModel.updateSessionDetails(id, updates)
@@ -364,7 +364,7 @@ class SessionDetailsActivity : AppCompatActivity() {
                 clientAddress = address,
                 workName = workName,
                 hasClientDetails = hasDetails,
-                receiptTimestamp = currentTimestamp
+                invoiceTimestamp = currentTimestamp
             )
             
             // Auto create/update client
@@ -374,17 +374,19 @@ class SessionDetailsActivity : AppCompatActivity() {
         }
 
         val updatedSession = currentSession!!
-        val receiptNum = if (updatedSession.receiptNumber.isNullOrEmpty()) {
-            val newNum = generateReceiptNumber()
+        val invoiceNum = if (!updatedSession.invoiceNumber.isNullOrEmpty()) {
+            updatedSession.invoiceNumber!!
+        } else if (!updatedSession.receiptNumber.isNullOrEmpty()) {
+            updatedSession.receiptNumber!!
+        } else {
+            val newNum = generateInvoiceNumber()
             sessionId?.let { viewModel.updateSessionStatus(it, updatedSession.status ?: "Work Completed", newNum) }
             newNum
-        } else {
-            updatedSession.receiptNumber!!
         }
 
-        val sessionForPdf = updatedSession.copy(receiptNumber = receiptNum)
+        val sessionForPdf = updatedSession.copy(invoiceNumber = invoiceNum)
         val pdfDocument = createPdfDocument(sessionForPdf, profile)
-        handlePdfAction(pdfDocument, receiptNum, action)
+        handlePdfAction(pdfDocument, invoiceNum, action)
     }
 
     private fun autoCreateOrUpdateClient(name: String, mobile: String, email: String, address: String) {
@@ -459,22 +461,23 @@ class SessionDetailsActivity : AppCompatActivity() {
         normalPaint.color = labelColor
         canvas.drawText("Stopwatch & Billing", 50f, yPos, normalPaint)
 
-        // Header - Right (Receipt Info)
+        // Header - Right (Invoice Info)
         val rightX = 545f
         titlePaint.textAlign = Paint.Align.RIGHT
         titlePaint.textSize = 28f
         titlePaint.color = darkBrown
-        canvas.drawText("RECEIPT", rightX, 60f, titlePaint)
+        canvas.drawText("INVOICE", rightX, 60f, titlePaint)
 
         normalPaint.textAlign = Paint.Align.RIGHT
         normalPaint.color = Color.BLACK
         normalPaint.textSize = 12f
-        canvas.drawText("Receipt No. : ${session.receiptNumber ?: "-"}", rightX, 85f, normalPaint)
+        val displayInvoiceNum = if (!session.invoiceNumber.isNullOrEmpty()) session.invoiceNumber else session.receiptNumber ?: "-"
+        canvas.drawText("Invoice No. : $displayInvoiceNum", rightX, 85f, normalPaint)
         
         // Date and Time on the same row, both on the right side
-        val receiptTs = if (session.receiptTimestamp != 0L) session.receiptTimestamp!! else (session.createdAt ?: session.timestamp ?: 0L)
-        val dateStr = "Date : ${SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(receiptTs))}"
-        val timeStr = "Time : ${SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(receiptTs))}"
+        val invoiceTs = if (session.invoiceTimestamp != 0L) session.invoiceTimestamp!! else if (session.receiptTimestamp != 0L) session.receiptTimestamp!! else (session.createdAt ?: session.timestamp ?: 0L)
+        val dateStr = "Date : ${SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(invoiceTs))}"
+        val timeStr = "Time : ${SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(invoiceTs))}"
         val combinedDateTime = "$dateStr     $timeStr"
         
         canvas.drawText(combinedDateTime, rightX, 105f, normalPaint)
@@ -669,14 +672,14 @@ class SessionDetailsActivity : AppCompatActivity() {
         yPos += 15f
         labelPaint.textAlign = Paint.Align.CENTER
         labelPaint.textSize = 10f
-        canvas.drawText("Automatically Generated Receipt", 297f, yPos, labelPaint)
+        canvas.drawText("Automatically Generated Invoice", 297f, yPos, labelPaint)
 
         pdfDocument.finishPage(page)
         return pdfDocument
     }
 
-    private fun handlePdfAction(pdfDocument: PdfDocument, receiptNumber: String, action: Action) {
-        val fileName = "Receipt_$receiptNumber.pdf"
+    private fun handlePdfAction(pdfDocument: PdfDocument, invoiceNumber: String, action: Action) {
+        val fileName = "Invoice_$invoiceNumber.pdf"
         
         // Save to cache for VIEW and SHARE
         val tempFile = File(cacheDir, fileName)
@@ -717,7 +720,7 @@ class SessionDetailsActivity : AppCompatActivity() {
                     resolver.openOutputStream(uri)?.use { outputStream ->
                         pdfDocument.writeTo(outputStream)
                     }
-                    Toast.makeText(this, "Receipt saved successfully.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Invoice saved successfully.", Toast.LENGTH_LONG).show()
                 } else {
                     throw Exception("Failed to create MediaStore entry")
                 }
@@ -731,7 +734,7 @@ class SessionDetailsActivity : AppCompatActivity() {
                     pdfDocument.writeTo(outputStream)
                 }
                 if (file.exists()) {
-                    Toast.makeText(this, "Receipt saved successfully.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Invoice saved successfully.", Toast.LENGTH_LONG).show()
                 } else {
                     throw Exception("File not found after saving")
                 }
@@ -756,6 +759,6 @@ class SessionDetailsActivity : AppCompatActivity() {
         intent.type = "application/pdf"
         intent.putExtra(Intent.EXTRA_STREAM, uri)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        startActivity(Intent.createChooser(intent, "Share Receipt"))
+        startActivity(Intent.createChooser(intent, "Share Invoice"))
     }
 }

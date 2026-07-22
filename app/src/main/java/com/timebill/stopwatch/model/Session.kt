@@ -5,14 +5,16 @@ import com.google.firebase.database.IgnoreExtraProperties
 @IgnoreExtraProperties
 data class Session(
     val id: String? = null,
-    val receiptNumber: String? = "",
+    val invoiceNumber: String? = "",
+    val receiptNumber: String? = "", // Deprecated: use invoiceNumber
     val clientName: String? = "",
     val clientMobile: String? = "",
     val clientEmail: String? = "",
     val clientAddress: String? = "",
     val workName: String? = "",
     val hasClientDetails: Boolean? = false,
-    val receiptTimestamp: Long? = 0L,
+    val invoiceTimestamp: Long? = 0L,
+    val receiptTimestamp: Long? = 0L, // Deprecated: use invoiceTimestamp
     val status: String? = "Work Completed",
     val startTime: Long? = 0L,
     val endTime: Long? = 0L,

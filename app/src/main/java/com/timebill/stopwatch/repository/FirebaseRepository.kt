@@ -35,10 +35,11 @@ class FirebaseRepository(private val guestId: String) {
         awaitClose { ref.removeEventListener(listener) }
     }
 
-    suspend fun updateSessionStatus(sessionId: String, status: String, receiptNumber: String) {
+    suspend fun updateSessionStatus(sessionId: String, status: String, invoiceNumber: String) {
         val updates = mapOf(
             "status" to status,
-            "receiptNumber" to receiptNumber
+            "invoiceNumber" to invoiceNumber,
+            "receiptNumber" to invoiceNumber // For backward compatibility
         )
         database.child("sessions").child(sessionId).updateChildren(updates).await()
     }

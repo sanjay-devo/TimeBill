@@ -23,9 +23,9 @@ class SessionDetailsViewModel(private val repository: FirebaseRepository) : View
         }
     }
 
-    fun updateSessionStatus(sessionId: String, status: String, receiptNumber: String) {
+    fun updateSessionStatus(sessionId: String, status: String, invoiceNumber: String) {
         viewModelScope.launch {
-            repository.updateSessionStatus(sessionId, status, receiptNumber)
+            repository.updateSessionStatus(sessionId, status, invoiceNumber)
         }
     }
 
