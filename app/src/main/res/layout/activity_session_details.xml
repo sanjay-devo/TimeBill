@@ -154,43 +154,48 @@
 
                         </LinearLayout>
 
-                        <LinearLayout
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:layout_marginBottom="8dp"
+                            android:hint="@string/label_work_name"
+                            app:placeholderText="@string/hint_work_name">
 
-                            <com.google.android.material.textfield.TextInputLayout
-                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                                android:layout_width="0dp"
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etWorkName"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:layout_marginEnd="4dp"
-                                android:layout_marginBottom="8dp"
-                                android:hint="@string/label_session_id">
+                                android:inputType="text" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/etSessionId"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:enabled="false" />
-                            </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:hint="@string/label_session_id">
 
-                            <com.google.android.material.textfield.TextInputLayout
-                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                                android:layout_width="0dp"
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etSessionId"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:layout_marginStart="4dp"
-                                android:layout_marginBottom="8dp"
-                                android:hint="@string/label_receipt_number">
+                                android:enabled="false" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/etReceiptNumberSummary"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:enabled="false" />
-                            </com.google.android.material.textfield.TextInputLayout>
-                        </LinearLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:hint="@string/label_receipt_number">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etReceiptNumberSummary"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:enabled="false" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"

@@ -233,10 +233,10 @@ class SessionDetailsActivity : AppCompatActivity() {
         binding.etClientMobileSD.setText(session.clientMobile)
         binding.etClientEmailSD.setText(session.clientEmail)
         binding.etClientAddressSD.setText(session.clientAddress)
+        binding.etWorkName.setText(session.workName)
 
-        if (!session.clientMobile.isNullOrEmpty() || !session.clientEmail.isNullOrEmpty() || !session.clientAddress.isNullOrEmpty()) {
-            binding.cbMoreDetails.isChecked = true
-        }
+        binding.cbMoreDetails.isChecked = session.hasClientDetails ?: false
+        binding.layoutMoreDetails.visibility = if (binding.cbMoreDetails.isChecked) View.VISIBLE else View.GONE
 
         binding.etSessionId.setText(session.id)
         binding.etReceiptNumberSummary.setText(session.receiptNumber)
@@ -324,15 +324,20 @@ class SessionDetailsActivity : AppCompatActivity() {
 
         // Capture current values from UI
         val name = binding.etClientName.text.toString().trim()
-        val mobile = binding.etClientMobileSD.text.toString().trim()
-        val email = binding.etClientEmailSD.text.toString().trim()
-        val address = binding.etClientAddressSD.text.toString().trim()
+        val hasDetails = binding.cbMoreDetails.isChecked
+        
+        val mobile = if (hasDetails) binding.etClientMobileSD.text.toString().trim() else ""
+        val email = if (hasDetails) binding.etClientEmailSD.text.toString().trim() else ""
+        val address = if (hasDetails) binding.etClientAddressSD.text.toString().trim() else ""
+        val workName = binding.etWorkName.text.toString().trim()
 
         val updates = mutableMapOf<String, Any?>()
         updates["clientName"] = name
         updates["clientMobile"] = mobile
         updates["clientEmail"] = email
         updates["clientAddress"] = address
+        updates["workName"] = workName
+        updates["hasClientDetails"] = hasDetails
 
         sessionId?.let { id ->
             viewModel.updateSessionDetails(id, updates)
@@ -341,11 +346,15 @@ class SessionDetailsActivity : AppCompatActivity() {
                 clientName = name,
                 clientMobile = mobile,
                 clientEmail = email,
-                clientAddress = address
+                clientAddress = address,
+                workName = workName,
+                hasClientDetails = hasDetails
             )
             
             // Auto create/update client
-            autoCreateOrUpdateClient(name, mobile, email, address)
+            if (hasDetails) {
+                autoCreateOrUpdateClient(name, mobile, email, address)
+            }
         }
 
         val updatedSession = currentSession!!
@@ -456,11 +465,15 @@ class SessionDetailsActivity : AppCompatActivity() {
         canvas.drawRect(50f, yPos, 545f, yPos + 2f, paint)
         yPos += 40f
 
+        val hasDetails = session.hasClientDetails == true
+
         // FROM & BILL TO (Side by Side)
         val rightColX = 300f
 
-        // FROM Section
         var leftY = yPos
+        var rightY = yPos
+
+        // FROM Section (Always visible)
         canvas.drawText("FROM", 50f, leftY, labelPaint)
         leftY += 20f
         titlePaint.textSize = 14f
@@ -484,28 +497,29 @@ class SessionDetailsActivity : AppCompatActivity() {
         }
 
         // BILL TO Section
-        var rightY = yPos
         canvas.drawText("BILL TO", rightColX, rightY, labelPaint)
         rightY += 20f
         titlePaint.textSize = 14f
         canvas.drawText(session.clientName ?: "Unnamed Client", rightColX, rightY, titlePaint)
-        
-        // Add captured client details from session to PDF
-        rightY += 18f
-        normalPaint.textSize = 11f
-        if (!session.clientMobile.isNullOrEmpty()) {
-            canvas.drawText(session.clientMobile, rightColX, rightY, normalPaint)
-            rightY += 15f
-        }
-        if (!session.clientEmail.isNullOrEmpty()) {
-            canvas.drawText(session.clientEmail, rightColX, rightY, normalPaint)
-            rightY += 15f
-        }
-        if (!session.clientAddress.isNullOrEmpty()) {
-            canvas.drawText(session.clientAddress, rightColX, rightY, normalPaint)
-            rightY += 15f
-        }
 
+        if (hasDetails) {
+            // Add captured client details from session to PDF if enabled
+            rightY += 18f
+            normalPaint.textSize = 11f
+            if (!session.clientMobile.isNullOrEmpty()) {
+                canvas.drawText(session.clientMobile, rightColX, rightY, normalPaint)
+                rightY += 15f
+            }
+            if (!session.clientEmail.isNullOrEmpty()) {
+                canvas.drawText(session.clientEmail, rightColX, rightY, normalPaint)
+                rightY += 15f
+            }
+            if (!session.clientAddress.isNullOrEmpty()) {
+                canvas.drawText(session.clientAddress, rightColX, rightY, normalPaint)
+                rightY += 15f
+            }
+        }
+        
         yPos = maxOf(leftY, rightY) + 50f
 
         // SESSION DETAILS TABLE
@@ -538,7 +552,8 @@ class SessionDetailsActivity : AppCompatActivity() {
 
         normalPaint.color = Color.BLACK
         normalPaint.typeface = Typeface.DEFAULT
-        canvas.drawText("Consultation Work", 60f, yPos + 25f, normalPaint)
+        val description = if (session.workName.isNullOrEmpty()) "General Work" else session.workName
+        canvas.drawText(description, 60f, yPos + 25f, normalPaint)
         canvas.drawText(formatDuration(session.durationMillis ?: 0L), 280f, yPos + 25f, normalPaint)
         canvas.drawText(String.format(Locale.getDefault(), "₹%.0f/hr", session.hourlyRate ?: 0.0), 400f, yPos + 25f, normalPaint)
         canvas.drawText(String.format(Locale.getDefault(), "₹%.2f", session.earnings ?: 0.0), 480f, yPos + 25f, normalPaint)

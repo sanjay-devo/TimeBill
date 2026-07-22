@@ -10,6 +10,8 @@ data class Session(
     val clientMobile: String? = "",
     val clientEmail: String? = "",
     val clientAddress: String? = "",
+    val workName: String? = "",
+    val hasClientDetails: Boolean? = false,
     val status: String? = "Work Completed",
     val startTime: Long? = 0L,
     val endTime: Long? = 0L,
