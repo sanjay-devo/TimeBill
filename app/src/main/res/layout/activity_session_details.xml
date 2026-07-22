@@ -373,7 +373,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Section 2: Billing Information -->
+            <!-- Section 3: Your Information -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardBillingInfo"
                 android:layout_width="match_parent"
@@ -576,7 +576,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Section 3: Receipt Information -->
+            <!-- Section 4: Receipt Information -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardReceiptInfo"
                 android:layout_width="match_parent"

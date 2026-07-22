@@ -174,7 +174,7 @@
     <string name="title_session_details">Session Details</string>
     <string name="label_client_details_section">Client Details</string>
     <string name="label_session_summary_section">Session Summary</string>
-    <string name="label_billing_info_section">Billing Information</string>
+    <string name="label_billing_info_section">Your Information</string>
     <string name="label_receipt_info_section">Receipt Information</string>
 
     <string name="label_session_id">Session ID</string>
