@@ -519,6 +519,44 @@ class SessionDetailsActivity : AppCompatActivity() {
                 rightY += 15f
             }
         }
+
+        // Status Badge Section
+        rightY += 15f
+        canvas.drawText("Status:", rightColX, rightY + 12.5f, labelPaint)
+        val labelWidth = labelPaint.measureText("Status:")
+        val badgeStartX = rightColX + labelWidth + 5f
+
+        val status = session.status ?: "Draft"
+        val (bgColor, textColor) = when (status) {
+            "Work Completed" -> Color.parseColor("#E8F5E9") to Color.parseColor("#2E7D32")
+            "Payment Pending" -> Color.parseColor("#FFF3E0") to Color.parseColor("#E65100")
+            "Payment Received" -> Color.parseColor("#E3F2FD") to Color.parseColor("#0D47A1")
+            "Work In Progress", "In Progress" -> Color.parseColor("#F3E5F5") to Color.parseColor("#4A148C")
+            "On Hold" -> Color.parseColor("#FFFDE7") to Color.parseColor("#F57F17")
+            "Cancelled" -> Color.parseColor("#FFEBEE") to Color.parseColor("#C62828")
+            "Draft" -> Color.parseColor("#F5F5F5") to Color.parseColor("#616161")
+            else -> Color.parseColor("#EFEBE9") to Color.parseColor("#4E342E")
+        }
+
+        val badgePaint = Paint().apply {
+            color = bgColor
+            style = Paint.Style.FILL
+        }
+        val statusTextPaint = Paint().apply {
+            color = textColor
+            textSize = 10f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        }
+
+        val textWidth = statusTextPaint.measureText(status)
+        val badgeWidth = textWidth + 20f
+        val badgeHeight = 18f
+        
+        val rectF = android.graphics.RectF(badgeStartX, rightY, badgeStartX + badgeWidth, rightY + badgeHeight)
+        canvas.drawRoundRect(rectF, 9f, 9f, badgePaint)
+        canvas.drawText(status, badgeStartX + 10f, rightY + 12.5f, statusTextPaint)
+        
+        rightY += badgeHeight + 5f
         
         yPos = maxOf(leftY, rightY) + 50f
 
