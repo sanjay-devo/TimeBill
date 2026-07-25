@@ -2,12 +2,10 @@ package com.timebill.stopwatch.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.timebill.stopwatch.model.UserProfile
 import com.timebill.stopwatch.repository.FirebaseRepository
 import com.timebill.stopwatch.utils.PreferenceManager
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
@@ -17,6 +15,9 @@ class ProfileViewModel(
 
     private val _guestId = MutableStateFlow(preferenceManager.getGuestId())
     val guestId: StateFlow<String> = _guestId
+
+    val userProfile: StateFlow<UserProfile?> = repository.getProfile()
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading

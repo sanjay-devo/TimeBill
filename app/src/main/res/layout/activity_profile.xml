@@ -58,6 +58,7 @@
                         android:contentDescription="@string/desc_app_icon" />
 
                     <TextView
+                        android:id="@+id/tvUserName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
@@ -66,15 +67,26 @@
                         android:textSize="20sp" />
 
                     <TextView
-                        android:id="@+id/tvGuestId"
+                        android:id="@+id/tvUserMobile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="sans-serif"
-                        android:text="@string/label_guest_id"
                         android:textColor="@color/label_text"
                         android:textSize="14sp"
-                        tools:text="Guest ID: guest_12345" />
+                        tools:text="+91 6232421011" />
+
+                    <TextView
+                        android:id="@+id/tvUserEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="sans-serif"
+                        android:textColor="@color/label_text"
+                        android:textSize="14sp"
+                        android:visibility="gone"
+                        tools:text="sanjayvaishya.dev@gmail.com"
+                        tools:visibility="visible" />
 
                 </LinearLayout>
 

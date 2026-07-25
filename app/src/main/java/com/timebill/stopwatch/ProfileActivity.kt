@@ -83,7 +83,29 @@ class ProfileActivity : AppCompatActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.guestId.collectLatest { guestId ->
-                binding.tvGuestId.text = getString(R.string.label_guest_id, guestId)
+                if (viewModel.userProfile.value == null) {
+                    binding.tvUserMobile.text = getString(R.string.label_guest_id, guestId)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.userProfile.collectLatest { profile ->
+                if (profile != null) {
+                    binding.tvUserName.text = if (profile.fullName.isNullOrEmpty()) getString(R.string.label_guest_user) else profile.fullName
+                    binding.tvUserMobile.text = if (profile.mobile.isNullOrEmpty()) getString(R.string.label_guest_id, viewModel.guestId.value) else profile.mobile
+                    
+                    if (!profile.email.isNullOrEmpty()) {
+                        binding.tvUserEmail.text = profile.email
+                        binding.tvUserEmail.visibility = View.VISIBLE
+                    } else {
+                        binding.tvUserEmail.visibility = View.GONE
+                    }
+                } else {
+                    binding.tvUserName.text = getString(R.string.label_guest_user)
+                    binding.tvUserMobile.text = getString(R.string.label_guest_id, viewModel.guestId.value)
+                    binding.tvUserEmail.visibility = View.GONE
+                }
             }
         }
 
