@@ -159,8 +159,7 @@ class SessionDetailsActivity : AppCompatActivity() {
                     generateAndHandlePdf(Action.SHARE)
                     true
                 }
-                R.id.action_delete_session -> {
-                    showDeleteConfirmation()
+                R.id.action_send_mail -> {
                     true
                 }
                 else -> false
