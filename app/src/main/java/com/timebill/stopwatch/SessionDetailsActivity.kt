@@ -323,12 +323,20 @@ class SessionDetailsActivity : AppCompatActivity() {
         updates["hasClientDetails"] = hasDetails
         
         val currentTimestamp = System.currentTimeMillis()
-        if (session.invoiceTimestamp == 0L) {
-            updates["invoiceTimestamp"] = currentTimestamp
-        }
+        updates["invoiceTimestamp"] = currentTimestamp
 
         sessionId?.let { id ->
             viewModel.updateSessionDetails(id, updates)
+            // Update local snapshot for fresh generation
+            currentSession = session.copy(
+                clientName = name,
+                clientMobile = mobile,
+                clientEmail = email,
+                clientAddress = address,
+                workName = workName,
+                hasClientDetails = hasDetails,
+                invoiceTimestamp = currentTimestamp
+            )
             if (hasDetails) {
                 autoCreateOrUpdateClient(name, mobile, email, address)
             }
@@ -344,32 +352,20 @@ class SessionDetailsActivity : AppCompatActivity() {
             newNum
         }
 
-        val updatedSession = session.copy(
-            clientName = name,
-            clientMobile = mobile,
-            clientEmail = email,
-            clientAddress = address,
-            workName = workName,
-            hasClientDetails = hasDetails,
-            invoiceNumber = invoiceNum,
-            invoiceTimestamp = if (session.invoiceTimestamp != 0L) session.invoiceTimestamp else currentTimestamp
-        )
+        val updatedSession = currentSession!!.copy(invoiceNumber = invoiceNum)
 
         val fileName = "Invoice_$invoiceNum.pdf"
         val pdfFile = File(cacheDir, fileName)
 
-        // Check if exists and generate if not (or just always generate to be sure)
-        // Requirement: "Check whether the latest invoice PDF already exists. If it exists, use it."
-        if (!pdfFile.exists()) {
-            try {
-                val pdfDocument = PdfUtils.createPdfDocument(updatedSession, profile)
-                FileOutputStream(pdfFile).use { pdfDocument.writeTo(it) }
-                pdfDocument.close()
-            } catch (e: Exception) {
-                hideLoadingDialog()
-                showErrorDialog("Failed to generate PDF: ${e.message}")
-                return
-            }
+        // Always generate a fresh PDF to ensure latest date/time
+        try {
+            val pdfDocument = PdfUtils.createPdfDocument(updatedSession, profile)
+            FileOutputStream(pdfFile).use { pdfDocument.writeTo(it) }
+            pdfDocument.close()
+        } catch (e: Exception) {
+            hideLoadingDialog()
+            showErrorDialog("Failed to generate PDF: ${e.message}")
+            return
         }
 
         if (pdfFile.exists()) {
