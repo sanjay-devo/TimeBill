@@ -196,10 +196,10 @@
     <string name="label_invoice_date">Invoice Date</string>
     <string name="label_generated_time">Invoice Time</string>
 
-    <string name="action_view_invoice">View Invoice</string>
-    <string name="action_download_pdf">Download PDF</string>
-    <string name="action_share_invoice">Share Invoice</string>
-    <string name="action_send_mail">Send Mail</string>
+    <string name="action_view_invoice">View</string>
+    <string name="action_download_pdf">Download</string>
+    <string name="action_share_invoice">Share</string>
+    <string name="action_send_mail">Mail</string>
     <string name="action_delete_session">Delete Session</string>
 
     <string name="dialog_delete_session_title">Delete Session?</string>
