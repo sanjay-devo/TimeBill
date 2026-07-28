@@ -61,6 +61,7 @@ dependencies {
     
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.okhttp)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
