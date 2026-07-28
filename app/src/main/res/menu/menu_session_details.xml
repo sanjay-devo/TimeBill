@@ -3,17 +3,21 @@
     <item
         android:id="@+id/action_view_invoice"
         android:icon="@drawable/ic_receipt_rounded"
-        android:title="@string/action_view_invoice" />
+        android:title="@string/action_view_invoice"
+        android:checkable="false" />
     <item
         android:id="@+id/action_download_pdf"
         android:icon="@drawable/ic_download_rounded"
-        android:title="@string/action_download_pdf" />
+        android:title="@string/action_download_pdf"
+        android:checkable="false" />
     <item
         android:id="@+id/action_share_invoice"
         android:icon="@drawable/ic_share_rounded"
-        android:title="@string/action_share_invoice" />
+        android:title="@string/action_share_invoice"
+        android:checkable="false" />
     <item
         android:id="@+id/action_send_mail"
         android:icon="@drawable/ic_mail_rounded"
-        android:title="@string/action_send_mail" />
+        android:title="@string/action_send_mail"
+        android:checkable="false" />
 </menu>

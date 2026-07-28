@@ -85,6 +85,9 @@ class SessionDetailsActivity : AppCompatActivity() {
         updateCollapseStates()
         observeData()
         observeEmailStatus()
+
+        // Disable default selection to make items behave like buttons
+        binding.bottomAppBar.menu.findItem(R.id.action_view_invoice)?.isChecked = false
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -156,21 +159,21 @@ class SessionDetailsActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.action_view_invoice -> {
                     generateAndHandlePdf(Action.VIEW)
-                    true
+                    false
                 }
                 R.id.action_download_pdf -> {
                     generateAndHandlePdf(Action.DOWNLOAD)
-                    true
+                    false
                 }
                 R.id.action_share_invoice -> {
                     generateAndHandlePdf(Action.SHARE)
-                    true
+                    false
                 }
                 R.id.action_send_mail -> {
                     if (validateInvoiceData()) {
                         showSendInvoiceConfirmation()
                     }
-                    true
+                    false
                 }
                 else -> false
             }
