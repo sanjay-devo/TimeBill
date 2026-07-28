@@ -292,7 +292,7 @@ class SessionDetailsActivity : AppCompatActivity() {
 
         MaterialAlertDialogBuilder(this)
             .setTitle("Send Invoice")
-            .setMessage("The invoice PDF will be generated automatically (if it doesn't already exist) and emailed to the client.\n\nClient: $clientName\nEmail: $clientEmail")
+            .setMessage("Client: $clientName\nEmail: $clientEmail")
             .setPositiveButton("Send") { _, _ ->
                 processSendInvoice()
             }
