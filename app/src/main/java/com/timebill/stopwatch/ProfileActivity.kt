@@ -78,6 +78,10 @@ class ProfileActivity : AppCompatActivity() {
         binding.btnDeleteGuestAccount.setOnClickListener {
             showDeleteGuestAccountDialog()
         }
+
+        binding.profileHeader.btnLogin.setOnClickListener {
+            Toast.makeText(this, R.string.coming_soon, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun observeViewModel() {

@@ -60,6 +60,7 @@
 
     <!-- Profile Strings -->
     <string name="title_profile">Profile</string>
+    <string name="action_login">Login</string>
     <string name="label_guest_user">Guest User</string>
     <string name="label_guest_id">Guest ID: %s</string>
     <string name="label_data_management">Data Management</string>
